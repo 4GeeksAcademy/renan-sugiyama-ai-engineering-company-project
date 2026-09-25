@@ -27,6 +27,33 @@ The project already includes a shared package:
 
 This indicates a TypeScript-first approach for shared models and contracts.
 
+### Frontend: incident back office
+
+The incident-management back office is implemented under `uis/backoffice` as a
+TypeScript React application.
+
+- React and React DOM for the component-based UI.
+- TypeScript for the application entrypoint, component props, API responses,
+  form payloads, and UI state models.
+- Vite for local development and production builds.
+- React Router for the incident queue, creation, and detail routes.
+- Zustand for local UI state such as filters, pagination, and toast messages.
+- TanStack Query for API requests, server-state caching, and invalidation after
+  incident mutations.
+- Prettier through the VS Code workspace formatter for TypeScript, TSX, and CSS
+  files on save.
+
+The back office consumes the centralized FastAPI service through its incident,
+catalog, summary, assignment, lifecycle, and audit endpoints. Its local
+commands are:
+
+```bash
+npm install
+npm run dev
+npm run typecheck
+npm run build
+```
+
 ### Intended runtime model
 
 The repository guidance suggests a centralized backend service and recommends a single entry point for company services. The intended backend is described as a FastAPI service, even though the implementation has not yet been created.
@@ -49,22 +76,34 @@ The repository anticipates a data pipeline model:
 - cleaned intermediate outputs
 - evaluation datasets
 
-### Not implemented yet
+## Current implementation status
 
-The repo is currently a starter template and does not yet contain a complete runnable application stack such as:
+The repository now contains a working incident-management slice, although it is
+not yet a complete company-wide application stack. The following parts remain
+outside the current implementation:
 
 - root `docker-compose.yml`
 - root package manager configuration
-- full backend service implementation
-- full frontend application implementation
 - working AI agent runtime
+
+Implemented for the incident-management scope:
+
+- FastAPI incident service under `services/api`
+- SQLite persistence and catalog repair migrations
+- TypeScript React back office under `uis/backoffice`
+- Shared TypeScript incident contracts under `packages/shared`
+- API contract tests and frontend typecheck/build scripts
 
 ## Expected technology direction
 
-The project is intended to support a modern AI engineering architecture with a combination of:
+The project supports a modern AI engineering architecture with a combination of:
 
 - Python backend services (FastAPI expected)
-- TypeScript shared contracts and packages
+- TypeScript React frontends and shared contracts/packages
+- Vite-based frontend tooling
+- React Router for client-side navigation
+- Zustand for local UI state
+- TanStack Query for server state and API cache management
 - LLM-based AI agents and skills
 - workflow orchestration tools
 - datasets and evaluation pipelines
