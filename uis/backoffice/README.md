@@ -5,7 +5,7 @@ TypeScript React back office for phase 4 of the incident-management plan. It use
 ## Run locally
 
 1. Install frontend dependencies: `npm install`.
-2. Start the API from the repository root: `.venv/bin/uvicorn app.main:app --app-dir services/api --reload`.
+2. Start the API from the repository root: `.venv/bin/uvicorn app.main:app --app-dir services/incident-api --reload`.
 3. Start the UI: `npm run dev`.
 4. Open the Vite URL shown in the terminal, usually `http://localhost:5173`.
 

@@ -272,7 +272,7 @@ The first release is acceptable only if:
 The approved local incident-management slice is implemented across:
 
 - `packages/shared/` for TypeScript contracts and type tests;
-- `services/api/` for the FastAPI application, SQLite persistence, migrations, catalogs, lifecycle rules, audit events, and contract tests;
+- `services/incident-api/` for the FastAPI application, SQLite persistence, migrations, catalogs, lifecycle rules, audit events, and contract tests;
 - `uis/backoffice/` for the Vite React queue, registration, detail, editing, lifecycle, audit, filtering, and summary workflows;
 - `docs/incident-management-catalogs.md` for stable catalog codes and labels.
 

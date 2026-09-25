@@ -7,7 +7,7 @@ from app.constants import SEVERITIES, SLA_HOURS, TRANSITIONS
 from app.db import initialize_database
 from app.routers import catalogs, health, incidents, summary
 
-# re-exported for backward compatibility with services/api/tests/test_contracts.py
+# re-exported for backward compatibility with services/incident-api/tests/test_contracts.py
 __all__ = ["app", "TRANSITIONS", "SEVERITIES", "SLA_HOURS"]
 
 app = FastAPI(title="Nexova Incident API", version="0.1.0")

@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
-DATABASE_PATH = Path(os.getenv("INCIDENT_DB_PATH", "services/api/data/incidents.db"))
+DATABASE_PATH = Path(os.getenv("INCIDENT_DB_PATH", "services/incident-api/data/incidents.db"))
 SLA_HOURS = 24
 
 CHANNELS = ("phone", "email", "web_chat")

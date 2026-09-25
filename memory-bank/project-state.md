@@ -6,7 +6,7 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
 
 ## Current file structure
 
-- `services/api/`: FastAPI service, application package, routers, schemas, SQLite database, migrations, and API contract tests.
+- `services/incident-api/`: FastAPI service, application package, routers, schemas, SQLite database, migrations, and API contract tests.
   - `app/main.py`: FastAPI application entry point.
   - `app/constants.py`: controlled catalogs, lifecycle transitions, and SLA constants.
   - `app/db.py`: SQLite connection, initialization, migrations, row mapping, and audit persistence helpers.
@@ -41,8 +41,8 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
 
 ## Local validation and run commands
 
-- API: from `services/api`, create a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
-- API tests: `PYTHONPATH=. pytest` from `services/api`, or `.venv/bin/pytest services/api/tests/test_contracts.py -q` from the repository root.
+- API: from `services/incident-api`, create a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
+- API tests: `PYTHONPATH=. pytest` from `services/incident-api`, or `.venv/bin/pytest services/incident-api/tests/test_contracts.py -q` from the repository root.
 - Back office: from `uis/backoffice`, run `npm install`, `npm run typecheck`, `npm run build`, and `npm run dev`.
 - The UI expects the API at the local Vite development setup and sends `X-Backoffice-User: local-user` by default.
 

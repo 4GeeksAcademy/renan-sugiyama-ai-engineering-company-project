@@ -1,9 +1,9 @@
 {
   "python.analysis.extraPaths": [
-    "${workspaceFolder}/services/api"
+    "${workspaceFolder}/services/incident-api"
   ],
   "python.testing.pytestEnabled": true,
-  "python.testing.cwd": "${workspaceFolder}/services/api",
+  "python.testing.cwd": "${workspaceFolder}/services/incident-api",
   "python.testing.pytestArgs": [
     "tests"
   ],
