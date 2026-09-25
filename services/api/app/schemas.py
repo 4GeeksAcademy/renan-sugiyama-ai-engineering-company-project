@@ -56,7 +56,7 @@ class IncidentResponse(BaseModel):
     client_account: str | None
     created_at: str
     updated_at: str
-    sla_target_at: str
+    sla_target_at: str | None
     resolved_at: str | None
     closed_at: str | None
     created_by: str
@@ -90,3 +90,8 @@ class IncidentListResponse(BaseModel):
 
 class SummaryResponse(BaseModel):
     open_incident_counts_by_severity: dict[str, int]
+    open_backlog_count: int
+    overdue_open_incident_count: int
+    sla_hours: int
+    average_resolution_hours: float | None
+    resolved_within_sla_percent: float | None

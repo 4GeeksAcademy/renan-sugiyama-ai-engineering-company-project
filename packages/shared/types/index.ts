@@ -88,7 +88,7 @@ export interface Incident extends BaseEntity {
   status: IncidentStatus;
   reporter: string;
   clientAccount?: string;
-  slaTargetAt: IsoDateTime;
+  slaTargetAt: IsoDateTime | null;
   resolvedAt?: IsoDateTime;
   closedAt?: IsoDateTime;
   createdBy: Id;
@@ -204,6 +204,11 @@ export interface OpenIncidentCountsBySeverity {
 
 export interface IncidentSummaryResponse {
   openIncidentCountsBySeverity: OpenIncidentCountsBySeverity;
+  openBacklogCount: number;
+  overdueOpenIncidentCount: number;
+  slaHours: number;
+  averageResolutionHours: number | null;
+  resolvedWithinSlaPercent: number | null;
 }
 
 export interface CatalogsResponse {

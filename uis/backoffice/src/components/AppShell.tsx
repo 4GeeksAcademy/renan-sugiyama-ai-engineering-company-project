@@ -37,7 +37,7 @@ export function AppShell() {
         <div className="sidebar-footer">
           <span className="status-dot" />
           <span>Operations online</span>
-          <small>24h committed SLA</small>
+          <small>24h Critical SLA</small>
         </div>
       </aside>
       <main className="main-content">

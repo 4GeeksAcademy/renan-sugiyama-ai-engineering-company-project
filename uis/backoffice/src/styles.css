@@ -240,6 +240,18 @@ h3 {
   color: var(--muted);
   font-size: 12px;
 }
+.summary-card.metric-card {
+  cursor: default;
+}
+.summary-card.metric-card::after {
+  border-color: #d9eee2;
+}
+.summary-card.overdue-metric::after {
+  border-color: #f5d7d4;
+}
+.summary-card.overdue-metric h3 {
+  color: var(--red);
+}
 .severity-label {
   color: var(--muted);
   font-family: "Space Mono", monospace;

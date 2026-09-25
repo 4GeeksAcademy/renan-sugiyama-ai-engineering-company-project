@@ -103,7 +103,11 @@ export function IncidentDetailPage() {
           />
           <DetailValue
             label="SLA target"
-            value={`${formatDate(incident.sla_target_at)} · ${isOverdue(incident) ? "Overdue" : "On track"}`}
+            value={
+              incident.sla_target_at
+                ? `${formatDate(incident.sla_target_at)} · ${isOverdue(incident) ? "Overdue" : "On track"}`
+                : "No SLA"
+            }
           />
         </div>
         <div className="action-row">

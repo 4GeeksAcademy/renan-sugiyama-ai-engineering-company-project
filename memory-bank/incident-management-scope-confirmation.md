@@ -115,7 +115,7 @@ The initial status defaults to `Open` and is server-controlled. Client/account i
 
 ### SLA calendar and escalation
 
-The SLA is measured in 24 elapsed hours. No separate business-hours calendar applies. The current 48-hour average is an operational baseline, not an additional catalog value or target rule.
+The SLA applies only to incidents with `Critical` severity and is measured in 24 elapsed hours. High, Medium, and Low incidents have no SLA target. No separate business-hours calendar applies. The current 48-hour average is an operational baseline, not an additional catalog value or target rule.
 
 ### Retention and audit policy
 

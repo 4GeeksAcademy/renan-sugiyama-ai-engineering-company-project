@@ -50,6 +50,8 @@ export const formatDate = (value: string) =>
 
 export const isOverdue = (incident: {
   status: string;
-  sla_target_at: string;
+  sla_target_at: string | null;
 }) =>
-  incident.status !== "closed" && new Date(incident.sla_target_at) < new Date();
+  incident.sla_target_at !== null &&
+  incident.status !== "closed" &&
+  new Date(incident.sla_target_at) < new Date();

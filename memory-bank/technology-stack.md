@@ -56,7 +56,7 @@ npm run build
 
 ### Intended runtime model
 
-The repository guidance suggests a centralized backend service and recommends a single entry point for company services. The intended backend is described as a FastAPI service, even though the implementation has not yet been created.
+The repository uses a centralized FastAPI backend under `services/api`, with `app.main:app` as the local entry point. A root workspace runner and production deployment model are still not defined.
 
 ### Intended AI and automation model
 
@@ -93,6 +93,15 @@ Implemented for the incident-management scope:
 - TypeScript React back office under `uis/backoffice`
 - Shared TypeScript incident contracts under `packages/shared`
 - API contract tests and frontend typecheck/build scripts
+
+### Local commands
+
+- API setup and run: `cd services/api`, create/activate a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
+- API tests: `PYTHONPATH=. pytest` from `services/api`.
+- Back office setup and run: `cd uis/backoffice`, `npm install`, then `npm run dev`.
+- Back office checks: `npm run typecheck` and `npm run build`.
+
+The API is mounted from `services/api/app/main.py` and exposes health, catalogs, incidents, and summary routers. SQLite stores incidents, users, and append-only audit events; migrations live under `services/api/migrations/`. The back office uses `X-Backoffice-User` and defaults to the local `local-user` identity.
 
 ## Expected technology direction
 

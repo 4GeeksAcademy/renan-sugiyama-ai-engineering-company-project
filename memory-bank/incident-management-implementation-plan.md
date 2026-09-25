@@ -6,13 +6,13 @@ Implement a traceable incident-management system for Nexova Solutions, focused o
 
 The system must support incident creation, editing, listing, viewing, classification, assignment, lifecycle tracking, SLA visibility, and auditable history.
 
-This is an implementation plan. The system is not implemented yet.
+This is the implementation plan and status record for the incident-management slice. The approved local implementation is now present; the remaining work is production hardening, broader tests, deployment, and future AI capabilities.
 
 ## 2. Business Context
 
 Nexova Solutions provides HR consulting, talent acquisition, outsourced customer support, and corporate training. The relevant department is **Customer Support (outsourced service)**, managed by Roberto Díaz with 30 agents.
 
-Its clients operate in technology, retail, and finance. Incidents arrive through phone, email, and web chat. The committed SLA is 24 hours, while the current average resolution time is 48 hours. Agents currently rely on experience and a shared Word document on Drive, and supervisors lack real-time workload and backlog visibility.
+Its clients operate in technology, retail, and finance. Incidents arrive through phone, email, and web chat. The committed SLA for Critical incidents is 24 hours, while the current average resolution time is 48 hours. Agents currently rely on experience and a shared Word document on Drive, and supervisors lack real-time workload and backlog visibility.
 
 ## 3. Controlled Catalogs
 
@@ -230,8 +230,20 @@ The system must use authenticated users, server-side authorization, protected cl
 ### Phase 5: SLA and pilot
 
 - Implement SLA and backlog indicators.
-- Validate against the 24-hour committed SLA and 48-hour current average.
+- Validate the Critical-only 24-hour SLA against the 48-hour current average.
 - Pilot with the Customer Support (outsourced service) team and collect operational feedback.
+
+#### Local implementation status
+
+The back office now exposes live operational summary metrics from the API:
+
+- Open backlog count for incidents whose status is not `Closed`.
+- Overdue open Critical incidents based on the elapsed 24-hour SLA target.
+- Resolved-within-SLA percentage from incidents with a resolution timestamp.
+- Average elapsed resolution time from resolved incidents.
+- Existing open counts grouped by severity remain available as filterable queue cards.
+
+The pilot validation remains an operational task. Nexova must compare the local metrics with the Customer Support team's records, confirm the 48-hour average-resolution baseline, and collect feedback on backlog and SLA usefulness before production hardening.
 
 ### Phase 6: Future capabilities
 
@@ -257,6 +269,15 @@ The first release is acceptable only if:
 
 ## 13. Project State and Constraints
 
-The repository is currently a starter monorepo. It does not yet contain a running FastAPI service, back-office UI, incident persistence, audit persistence, migrations, incident APIs, or workflow tests.
+The approved local incident-management slice is implemented across:
 
-No incident-management code should be implemented until the plan's catalogs, lifecycle transitions, routing rules, and permissions are validated by Nexova.
+- `packages/shared/` for TypeScript contracts and type tests;
+- `services/api/` for the FastAPI application, SQLite persistence, migrations, catalogs, lifecycle rules, audit events, and contract tests;
+- `uis/backoffice/` for the Vite React queue, registration, detail, editing, lifecycle, audit, filtering, and summary workflows;
+- `docs/incident-management-catalogs.md` for stable catalog codes and labels.
+
+The repository does not yet include a production identity provider, root workspace runner, Docker Compose setup, deployed infrastructure, comprehensive persistence/API tests, or complete UI workflow tests. AI agents, MCP servers, data pipelines, and workflow automation remain future extension areas.
+
+The local API uses `X-Backoffice-User` authentication backed by the SQLite `backoffice_users` table. The default local UI user is `local-user`, which must be seeded before using protected endpoints.
+
+The implementation follows the approved catalogs, lifecycle transitions, assignment rules, mandatory fields, Critical-only 24-hour elapsed-time SLA, and audit requirements recorded in the scope confirmation. Future changes must preserve those controlled values and transition constraints unless the business decision log is updated.

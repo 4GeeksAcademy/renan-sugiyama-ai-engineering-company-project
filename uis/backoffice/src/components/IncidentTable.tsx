@@ -59,13 +59,17 @@ export function IncidentTable() {
                   </td>
                   <td>{readable(incident.responsible_area)}</td>
                   <td>
-                    <span
-                      className={`sla ${isOverdue(incident) ? "overdue" : "on-track"}`}
-                    >
-                      {isOverdue(incident) ? "OVERDUE" : "ON TRACK"}
-                      <br />
-                      {formatDate(incident.sla_target_at)}
-                    </span>
+                    {incident.sla_target_at ? (
+                      <span
+                        className={`sla ${isOverdue(incident) ? "overdue" : "on-track"}`}
+                      >
+                        {isOverdue(incident) ? "OVERDUE" : "ON TRACK"}
+                        <br />
+                        {formatDate(incident.sla_target_at)}
+                      </span>
+                    ) : (
+                      <span className="sla">NO SLA</span>
+                    )}
                   </td>
                   <td>{formatDate(incident.updated_at)}</td>
                   <td>

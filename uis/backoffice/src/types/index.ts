@@ -19,7 +19,7 @@ export type Incident = {
   status: string;
   reporter: string;
   client_account?: string;
-  sla_target_at: string;
+  sla_target_at: string | null;
   updated_at: string;
 };
 
@@ -52,6 +52,11 @@ export type IncidentListResponse = {
 
 export type Summary = {
   open_incident_counts_by_severity: Record<string, number>;
+  open_backlog_count: number;
+  overdue_open_incident_count: number;
+  sla_hours: number;
+  average_resolution_hours: number | null;
+  resolved_within_sla_percent: number | null;
 };
 
 export type ActionRequest = { path: string; payload: Record<string, string> };

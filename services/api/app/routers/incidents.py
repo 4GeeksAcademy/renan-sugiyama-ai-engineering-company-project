@@ -38,7 +38,11 @@ def create_incident(
         "status": "open",
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
-        "sla_target_at": (now + timedelta(hours=SLA_HOURS)).isoformat(),
+        "sla_target_at": (
+            (now + timedelta(hours=SLA_HOURS)).isoformat()
+            if payload.severity == "critical"
+            else None
+        ),
         "resolved_at": None,
         "closed_at": None,
         "created_by": user.id,
@@ -118,15 +122,23 @@ def update_incident(
     updates = payload.model_dump(exclude_unset=True)
     if not updates:
         raise HTTPException(status_code=400, detail="At least one field is required")
-    updates.update({"updated_at": utc_now(), "updated_by": user.id})
     assignments = ", ".join(f"{column} = ?" for column in updates)
     with closing(connect()) as connection:
+        row = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
+        if row is None:
+            raise HTTPException(status_code=404, detail="Incident not found")
+        if "severity" in updates:
+            if updates["severity"] == "critical" and row["sla_target_at"] is None:
+                created_at = datetime.fromisoformat(row["created_at"])
+                updates["sla_target_at"] = (created_at + timedelta(hours=SLA_HOURS)).isoformat()
+            elif updates["severity"] != "critical":
+                updates["sla_target_at"] = None
+        updates.update({"updated_at": utc_now(), "updated_by": user.id})
+        assignments = ", ".join(f"{column} = ?" for column in updates)
         cursor = connection.execute(
             f"UPDATE incidents SET {assignments} WHERE id = ?",
             [*updates.values(), incident_id],
         )
-        if cursor.rowcount == 0:
-            raise HTTPException(status_code=404, detail="Incident not found")
         connection.commit()
         row = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
     return row_to_incident(row)
