@@ -1,11 +1,14 @@
 import {
   DEFAULT_INVENTORY_UNIT,
   INVENTORY_UNITS,
+  isValidInventoryMovementRequest,
+  INVENTORY_MOVEMENT_TYPES,
   isValidInventoryItemCreationRequest,
   isValidInventoryItemReorderPoint,
   isValidInventoryItemIdentity,
   isValidInventoryItemName,
   isValidInventoryUnit,
+  type CreateInventoryMovementRequest,
   normalizeInventoryItemCreationRequest,
   type CreateInventoryItemRequest,
   type InventoryItem,
@@ -28,6 +31,15 @@ const inventoryCreationRequest: CreateInventoryItemRequest = {
 
 const normalizedInventoryCreationRequest =
   normalizeInventoryItemCreationRequest(inventoryCreationRequest);
+
+const incomingMovement: CreateInventoryMovementRequest = {
+  itemId: "inv-1",
+  type: "incoming_stock",
+  quantity: 5,
+  reason: "New supply received",
+  recordedAt: "2026-09-25T12:00:00Z",
+  unit: "ream",
+};
 
 function assertContract(condition: boolean): void {
   if (!condition) {
@@ -54,3 +66,39 @@ assertContract(
   normalizedInventoryCreationRequest?.unit === DEFAULT_INVENTORY_UNIT,
 );
 assertContract(normalizedInventoryCreationRequest?.reorderPoint === null);
+assertContract(INVENTORY_MOVEMENT_TYPES.length === 3);
+assertContract(isValidInventoryMovementRequest(incomingMovement, "ream"));
+assertContract(
+  !isValidInventoryMovementRequest(
+    { ...incomingMovement, quantity: 0 },
+    "ream",
+  ),
+);
+assertContract(
+  !isValidInventoryMovementRequest(
+    { ...incomingMovement, reason: "  " },
+    "ream",
+  ),
+);
+assertContract(
+  !isValidInventoryMovementRequest(
+    { ...incomingMovement, unit: "box" },
+    "ream",
+  ),
+);
+assertContract(
+  isValidInventoryMovementRequest(
+    {
+      ...incomingMovement,
+      type: "stock_adjustment",
+      direction: "increase",
+    },
+    "ream",
+  ),
+);
+assertContract(
+  !isValidInventoryMovementRequest(
+    { ...incomingMovement, type: "stock_adjustment" },
+    "ream",
+  ),
+);

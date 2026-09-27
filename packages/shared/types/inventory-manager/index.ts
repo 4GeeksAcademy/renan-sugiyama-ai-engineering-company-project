@@ -1,4 +1,4 @@
-import type { BaseEntity, Id } from "../index";
+import type { BaseEntity, Id, IsoDateTime } from "../index";
 
 export const DEFAULT_INVENTORY_UNIT = "unit" as const;
 
@@ -13,6 +13,22 @@ export const INVENTORY_UNITS = [
 ] as const;
 
 export type InventoryUnit = (typeof INVENTORY_UNITS)[number];
+
+export const INVENTORY_MOVEMENT_TYPES = [
+  "incoming_stock",
+  "outgoing_stock",
+  "stock_adjustment",
+] as const;
+
+export type InventoryMovementType = (typeof INVENTORY_MOVEMENT_TYPES)[number];
+
+export const INVENTORY_ADJUSTMENT_DIRECTIONS = [
+  "increase",
+  "decrease",
+] as const;
+
+export type InventoryAdjustmentDirection =
+  (typeof INVENTORY_ADJUSTMENT_DIRECTIONS)[number];
 
 export interface InventoryItem extends BaseEntity {
   name: string;
@@ -34,10 +50,89 @@ export interface UpdateInventoryItemRequest {
   reorderPoint?: number | null;
 }
 
+export interface InventoryMovement extends BaseEntity {
+  itemId: Id;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  recordedAt: IsoDateTime;
+  unit: InventoryUnit;
+  direction?: InventoryAdjustmentDirection;
+}
+
+export interface CreateInventoryMovementRequest {
+  itemId: Id;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  recordedAt: IsoDateTime;
+  unit: InventoryUnit;
+  direction?: InventoryAdjustmentDirection;
+}
+
 export function isValidInventoryUnit(value: unknown): value is InventoryUnit {
   return (
     typeof value === "string" &&
     INVENTORY_UNITS.includes(value as InventoryUnit)
+  );
+}
+
+export function isValidInventoryMovementType(
+  value: unknown,
+): value is InventoryMovementType {
+  return (
+    typeof value === "string" &&
+    INVENTORY_MOVEMENT_TYPES.includes(value as InventoryMovementType)
+  );
+}
+
+export function isValidInventoryAdjustmentDirection(
+  value: unknown,
+): value is InventoryAdjustmentDirection {
+  return (
+    typeof value === "string" &&
+    INVENTORY_ADJUSTMENT_DIRECTIONS.includes(
+      value as InventoryAdjustmentDirection,
+    )
+  );
+}
+
+export function isValidInventoryMovementReason(
+  value: unknown,
+): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+export function isValidInventoryMovementTimestamp(
+  value: unknown,
+): value is IsoDateTime {
+  return (
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    !Number.isNaN(Date.parse(value))
+  );
+}
+
+export function isValidInventoryMovementRequest(
+  payload: Partial<CreateInventoryMovementRequest>,
+  itemUnit?: InventoryUnit,
+): payload is CreateInventoryMovementRequest {
+  const isAdjustment = payload.type === "stock_adjustment";
+  const hasValidDirection = isAdjustment
+    ? isValidInventoryAdjustmentDirection(payload.direction)
+    : payload.direction === undefined;
+
+  return (
+    isValidInventoryItemIdentity(payload.itemId) &&
+    isValidInventoryMovementType(payload.type) &&
+    typeof payload.quantity === "number" &&
+    Number.isFinite(payload.quantity) &&
+    payload.quantity > 0 &&
+    isValidInventoryMovementReason(payload.reason) &&
+    isValidInventoryMovementTimestamp(payload.recordedAt) &&
+    isValidInventoryUnit(payload.unit) &&
+    (itemUnit === undefined || payload.unit === itemUnit) &&
+    hasValidDirection
   );
 }
 
