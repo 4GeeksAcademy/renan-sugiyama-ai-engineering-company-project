@@ -81,6 +81,18 @@ class InventoryMovementCreate(BaseModel):
         return self
 
 
+class InventoryMovementResponse(BaseModel):
+    id: str
+    item_id: str
+    type: InventoryMovementType
+    quantity: float
+    reason: str
+    recorded_at: datetime
+    unit: InventoryUnit
+    direction: InventoryAdjustmentDirection | None
+    created_at: datetime
+
+
 def validate_movement_unit(
     item_unit: InventoryUnit,
     movement_unit: InventoryUnit,

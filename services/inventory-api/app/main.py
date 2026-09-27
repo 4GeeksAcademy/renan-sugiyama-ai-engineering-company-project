@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import initialize_database
-from app.routers import inventory_items
+from app.routers import inventory_items, inventory_movements
 
 app = FastAPI(title="Nexova Inventory API", version="0.1.0")
 app.add_middleware(
@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["Content-Type", "X-Inventory-User"],
 )
 app.include_router(inventory_items.router)
+app.include_router(inventory_movements.router)
 
 
 @app.on_event("startup")

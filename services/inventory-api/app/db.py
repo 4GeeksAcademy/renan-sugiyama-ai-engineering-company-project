@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app.constants import DATABASE_PATH
-from app.schemas import InventoryItemResponse
+from app.schemas import InventoryItemResponse, InventoryMovementResponse
 
 
 def utc_now() -> str:
@@ -46,3 +46,7 @@ def row_to_inventory_item(row: sqlite3.Row) -> InventoryItemResponse:
     item["current_stock"] = None
     item["active"] = bool(item["active"])
     return InventoryItemResponse(**item)
+
+
+def row_to_inventory_movement(row: sqlite3.Row) -> InventoryMovementResponse:
+    return InventoryMovementResponse(**dict(row))
