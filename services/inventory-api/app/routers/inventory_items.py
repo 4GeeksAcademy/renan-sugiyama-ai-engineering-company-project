@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from contextlib import closing
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.db import connect, row_to_inventory_item, utc_now
+from app.dependencies import inventory_manager_user
 from app.schemas import (
     InventoryItemCreate,
     InventoryItemListResponse,
@@ -12,7 +13,11 @@ from app.schemas import (
     InventoryItemUpdate,
 )
 
-router = APIRouter(prefix="/inventory/items", tags=["inventory-items"])
+router = APIRouter(
+    prefix="/inventory/items",
+    tags=["inventory-items"],
+    dependencies=[Depends(inventory_manager_user)],
+)
 
 
 @router.post("", response_model=InventoryItemResponse, status_code=status.HTTP_201_CREATED)
