@@ -22,7 +22,7 @@ export interface InventoryItem extends BaseEntity {
 }
 
 export interface CreateInventoryItemRequest {
-  id?: Id;
+  id: Id;
   name: string;
   unit?: InventoryUnit;
   reorderPoint?: number | null;
@@ -49,10 +49,36 @@ export function isValidInventoryItemName(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+export function isValidInventoryItemCreationRequest(
+  payload: Partial<CreateInventoryItemRequest>,
+): payload is CreateInventoryItemRequest {
+  return (
+    isValidInventoryItemIdentity(payload.id) &&
+    isValidInventoryItemName(payload.name) &&
+    (payload.unit === undefined || isValidInventoryUnit(payload.unit)) &&
+    isValidInventoryItemReorderPoint(payload.reorderPoint)
+  );
+}
+
 export function normalizeInventoryItemUnit(
   value?: InventoryUnit | null,
 ): InventoryUnit {
   return value && isValidInventoryUnit(value) ? value : DEFAULT_INVENTORY_UNIT;
+}
+
+export function normalizeInventoryItemCreationRequest(
+  payload: Partial<CreateInventoryItemRequest>,
+): CreateInventoryItemRequest | null {
+  if (!isValidInventoryItemCreationRequest(payload)) {
+    return null;
+  }
+
+  return {
+    id: payload.id,
+    name: payload.name,
+    unit: normalizeInventoryItemUnit(payload.unit),
+    reorderPoint: payload.reorderPoint ?? null,
+  };
 }
 
 export function isValidInventoryItemReorderPoint(
