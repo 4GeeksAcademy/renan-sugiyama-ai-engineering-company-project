@@ -12,29 +12,23 @@ This document defines the execution-level tasks required to satisfy the approved
 
 ### Objective
 
-Define the shared inventory item lifecycle contracts and validation rules required by the domain.
+Define shared inventory item contracts and field-level validation.
 
 ### Changes
 
-- Add shared inventory item constants, enums, and contract types in `packages/shared`.
-- Add validation helpers for identity, name, unit defaults, reorder points, supported units, and item update/remove rules.
-- Add contract tests for successful and rejected item creation, update, list, and removal inputs.
+- Add item types, supported units, default unit, and reorder-point validation in `packages/shared`.
+- Add contract tests for item identity, name, unit, and reorder-point inputs.
 
 ### Acceptance Criteria
 
-- AC-INV-001
 - AC-INV-002
 - AC-INV-003
 - AC-INV-017
 - AC-INV-019
-- AC-INV-024
-- AC-INV-025
-- AC-INV-026
 
 ### Verification
 
-- Unit: validation behavior for item creation and default values.
-- Contract: request validation rejects missing identity, invalid name, negative reorder point, and unsupported unit values.
+- Unit: invalid required fields, unsupported units, and negative reorder points are rejected; omitted values receive the defined defaults.
 
 ### Dependencies
 
@@ -44,179 +38,223 @@ Define the shared inventory item lifecycle contracts and validation rules requir
 
 - Pending implementation
 
----
-
 ## TASK-INV-002
 
 ### Objective
 
-Define the inventory movement contracts and movement validation rules, including reason and timestamp requirements.
+Implement the inventory item lifecycle API.
 
 ### Changes
 
-- Add shared movement contract types and supported movement-type constants.
-- Add validation helpers for movement quantity, movement reason, recorded timestamp, adjustment direction, item reference checks, and unit consistency.
-- Add contract tests for valid and invalid movement payloads.
-
-### Acceptance Criteria
-
-- AC-INV-004
-- AC-INV-005
-- AC-INV-006
-- AC-INV-018
-- AC-INV-020
-- AC-INV-027
-- AC-INV-028
-
-### Verification
-
-- Unit: movement validation rejects unknown items, unsupported types, non-positive quantities, invalid adjustment direction, invalid units, and negative-stock outcomes.
-- Contract: valid movement payloads are accepted when all domain rules are satisfied.
-
-### Dependencies
-
-- TASK-INV-001
-
-### Commit
-
-- Pending implementation
-
----
-
-## TASK-INV-003
-
-### Objective
-
-Implement the inventory item lifecycle endpoints and enforcement of the inventory-manager role.
-
-### Changes
-
-- Add the item router and item lifecycle API logic in the centralized backend service.
-- Validate required fields, default unit/reorder values, update rules, remove/archive behavior, and access control for inventory item operations.
-- Add rejection handling for unauthorized and invalid item requests.
+- Add create, list, retrieve, update, and remove/archive operations for inventory items.
+- Restrict updates to allowed item fields and preserve movement history on update or removal.
 
 ### Acceptance Criteria
 
 - AC-INV-001
-- AC-INV-002
-- AC-INV-003
-- AC-INV-019
-- AC-INV-023
 - AC-INV-024
 - AC-INV-025
 - AC-INV-026
 
 ### Verification
 
-- API: create item succeeds for valid data and fails for invalid data.
-- API: requests from users without `inventory-manager` role are rejected and do not create inventory data.
+- API: valid item lifecycle operations succeed; invalid updates do not alter movement history or derived stock; removal excludes the item from active operations without deleting history.
 
 ### Dependencies
 
 - TASK-INV-001
-- TASK-INV-002
 
 ### Commit
 
 - Pending implementation
 
----
+## TASK-INV-003
+
+### Objective
+
+Enforce the inventory-manager role for inventory operations.
+
+### Changes
+
+- Add the role dependency to item, movement, correction, and inventory-query operations.
+- Reject unauthorized requests before any inventory mutation.
+
+### Acceptance Criteria
+
+- AC-INV-023
+
+### Verification
+
+- API: a request without `inventory-manager` is rejected and leaves inventory data unchanged.
+
+### Dependencies
+
+- TASK-INV-002
+
+### Commit
+
+- Pending implementation
 
 ## TASK-INV-004
 
 ### Objective
 
-Implement inventory movement registration, reason/timestamp checks, and stock-safety validation.
+Define shared inventory movement contracts and payload validation.
 
 ### Changes
 
-- Add movement registration endpoint and persistence logic.
-- Enforce supported movement types, reason requirement, timestamp requirement, and positive quantity rules.
-- Block any movement that would reduce stock below zero.
-- Ensure movement history is the only source of stock-affecting state.
+- Add movement types, quantity, reason, timestamp, direction, and unit contracts in `packages/shared`.
+- Validate movement type, positive quantity, reason, timestamp, adjustment direction, and item-unit consistency.
 
 ### Acceptance Criteria
 
 - AC-INV-004
-- AC-INV-005
 - AC-INV-006
-- AC-INV-007
-- AC-INV-008
-- AC-INV-009
-- AC-INV-020
-- AC-INV-021
+- AC-INV-018
 - AC-INV-027
 - AC-INV-028
 
 ### Verification
 
-- Integration: incoming, outgoing, and stock-adjustment movements update derived stock according to the movement history.
-- API: invalid movement requests are rejected without changing the item’s resulting current stock.
+- Unit: invalid movement payloads are rejected and valid payloads are accepted without requiring persistence or stock calculation.
 
 ### Dependencies
 
-- TASK-INV-002
-- TASK-INV-003
+- TASK-INV-001
 
 ### Commit
 
 - Pending implementation
 
----
-
 ## TASK-INV-005
 
 ### Objective
 
-Implement current-stock and reorder-point calculation queries from movement history and expose the alert signal.
+Register valid inventory movements and enforce negative-stock safety.
 
 ### Changes
 
-- Add stock-derivation logic over the complete movement history for each inventory item.
-- Add below-reorder-point query logic and ordering by `reorder_point - current_stock`.
-- Exclude `null` reorder points and ensure equality is not treated as below threshold.
-- Prevent any direct current-stock mutation path in API or domain logic.
-- Expose a visible back-office alert when the stock is below the reorder point.
+- Add movement registration and persistence for incoming, outgoing, and adjustment movements.
+- Reject unknown items and movements that would produce negative stock.
 
 ### Acceptance Criteria
 
-- AC-INV-010
-- AC-INV-011
-- AC-INV-012
-- AC-INV-013
-- AC-INV-014
-- AC-INV-015
-- AC-INV-016
-- AC-INV-029
+- AC-INV-005
+- AC-INV-020
 
 ### Verification
 
-- Unit: stock derivation matches movement history for empty, single-movement, and multi-movement cases.
-- Integration: below-reorder-point results include only valid items and are ordered by the largest deficit first.
-- API: direct current-stock mutation attempts are rejected and no stock field is exposed as writable state.
+- Integration: unknown-item and negative-stock requests are rejected without creating a movement or changing derived stock.
 
 ### Dependencies
 
+- TASK-INV-003
 - TASK-INV-004
 
 ### Commit
 
 - Pending implementation
 
----
-
 ## TASK-INV-006
 
 ### Objective
 
-Implement immutability and correction handling for movement history.
+Implement current-stock derivation from movement history.
 
 ### Changes
 
-- Preserve original movements as immutable records.
-- Add correction workflow that appends a compensating movement.
-- Emit the `InventoryMovementCorrected` event when a movement is corrected.
-- Ensure corrected history remains auditable and does not delete the original movement.
+- Calculate current stock from the complete movement history.
+- Return `null` before the first movement and calculate from zero after the first movement.
+
+### Acceptance Criteria
+
+- AC-INV-007
+- AC-INV-008
+- AC-INV-009
+- AC-INV-010
+- AC-INV-012
+- AC-INV-013
+- AC-INV-021
+
+### Verification
+
+- Unit/integration: empty, incoming, outgoing, adjustment, and multi-movement histories produce the expected derived stock.
+
+### Dependencies
+
+- TASK-INV-005
+
+### Commit
+
+- Pending implementation
+
+## TASK-INV-007
+
+### Objective
+
+Implement below-reorder-point evaluation and ordering.
+
+### Changes
+
+- Identify items strictly below a non-null reorder point.
+- Exclude equal, above-threshold, and null-threshold items.
+- Order results by descending stock deficit.
+
+### Acceptance Criteria
+
+- AC-INV-014
+- AC-INV-015
+- AC-INV-016
+
+### Verification
+
+- Integration: query results contain only below-threshold items and are ordered by `reorder_point - current_stock` descending.
+
+### Dependencies
+
+- TASK-INV-006
+
+### Commit
+
+- Pending implementation
+
+## TASK-INV-008
+
+### Objective
+
+Prevent direct current-stock mutation.
+
+### Changes
+
+- Keep current stock read-only and derived.
+- Reject API and domain operations that attempt to set or edit current stock.
+
+### Acceptance Criteria
+
+- AC-INV-011
+
+### Verification
+
+- API: direct current-stock mutation attempts are rejected and neither movement history nor derived stock changes.
+
+### Dependencies
+
+- TASK-INV-006
+
+### Commit
+
+- Pending implementation
+
+## TASK-INV-009
+
+### Objective
+
+Implement immutable movement correction handling.
+
+### Changes
+
+- Preserve the original movement.
+- Append a compensating movement and emit `InventoryMovementCorrected`.
 
 ### Acceptance Criteria
 
@@ -224,8 +262,63 @@ Implement immutability and correction handling for movement history.
 
 ### Verification
 
-- Integration: correcting a movement retains the original record and adds a compensating movement plus the correction event.
-- API/contract: the response and event payload clearly represent the corrected movement history.
+- Integration: correction retains the original movement, appends the compensating movement, and emits the correction event.
+
+### Dependencies
+
+- TASK-INV-005
+- TASK-INV-006
+
+### Commit
+
+- Pending implementation
+
+## TASK-INV-010
+
+### Objective
+
+Implement back-office inventory item lifecycle screens.
+
+### Changes
+
+- Add item create, list, detail, update, and remove/archive views.
+- Show API validation errors for item lifecycle operations.
+
+### Acceptance Criteria
+
+- None owned; this task presents the behavior implemented by AC-INV-001, AC-INV-002, AC-INV-003, AC-INV-024, AC-INV-025, and AC-INV-026.
+
+### Verification
+
+- UI: users can complete each item lifecycle operation and see validation feedback without a current-stock input.
+
+### Dependencies
+
+- TASK-INV-002
+- TASK-INV-008
+
+### Commit
+
+- Pending implementation
+
+## TASK-INV-011
+
+### Objective
+
+Implement the back-office movement registration screen.
+
+### Changes
+
+- Add movement type, quantity, reason, timestamp, direction, and item-unit controls.
+- Display movement validation and negative-stock errors returned by the API.
+
+### Acceptance Criteria
+
+- None owned; this task presents the behavior implemented by AC-INV-004, AC-INV-005, AC-INV-006, AC-INV-018, AC-INV-020, AC-INV-027, and AC-INV-028.
+
+### Verification
+
+- UI: users can submit a valid movement and receive field-level feedback for invalid or unsafe movement data.
 
 ### Dependencies
 
@@ -236,73 +329,52 @@ Implement immutability and correction handling for movement history.
 
 - Pending implementation
 
----
-
-## TASK-INV-007
+## TASK-INV-012
 
 ### Objective
 
-Implement the operational back-office inventory views and user-facing validation for the item lifecycle and stock alerts.
+Expose derived stock and below-reorder-point signals in the back office.
 
 ### Changes
 
-- Add item creation, list, detail, update, and removal screens for the back-office UI.
-- Add movement registration screens with movement type, reason, and timestamp.
-- Add below-reorder-point alerts and visible signal indicators.
-- Ensure current stock is presented as derived data only, not as editable state.
-- Include validation feedback consistent with API-level errors.
+- Display current stock as read-only derived data.
+- Show a visible replenishment alert for items below their reorder point.
 
 ### Acceptance Criteria
 
-- AC-INV-001
-- AC-INV-004
-- AC-INV-010
-- AC-INV-011
-- AC-INV-014
-- AC-INV-016
-- AC-INV-024
-- AC-INV-025
-- AC-INV-026
-- AC-INV-027
 - AC-INV-029
 
 ### Verification
 
-- End-to-end: user can create items and movements and observe derived stock and reorder-point alerts.
-- UI: no form control allows direct editing of current stock.
+- UI: an item below its reorder point displays a visible alert, while current stock has no editable control.
 
 ### Dependencies
 
-- TASK-INV-003
-- TASK-INV-004
-- TASK-INV-005
+- TASK-INV-007
+- TASK-INV-008
 
 ### Commit
 
 - Pending implementation
 
----
-
-## TASK-INV-008
+## TASK-INV-013
 
 ### Objective
 
-Run acceptance-level verification across the inventory module.
+Run the final regression verification for the inventory module.
 
 ### Changes
 
-- Execute the focused contract, integration, and API tests covering the approved EARS acceptance criteria.
-- Confirm the invariant that current stock derives exclusively from movements.
-- Validate authorization failures, invalid movement rejection, and reorder-point behavior.
+- Execute the focused contract, API, integration, and UI checks owned by TASK-INV-001 through TASK-INV-012.
+- Confirm no direct current-stock mutation path exists.
 
 ### Acceptance Criteria
 
-- AC-INV-001 through AC-INV-023 as applicable to the release scope
+- Release verification only; this task owns no additional business criterion.
 
 ### Verification
 
-- API and integration verification against the approved acceptance criteria set.
-- Regression check for no direct stock mutation path.
+- Regression: all acceptance criteria AC-INV-001 through AC-INV-029 pass through their owning tasks.
 
 ### Dependencies
 
@@ -313,22 +385,12 @@ Run acceptance-level verification across the inventory module.
 - TASK-INV-005
 - TASK-INV-006
 - TASK-INV-007
+- TASK-INV-008
+- TASK-INV-009
+- TASK-INV-010
+- TASK-INV-011
+- TASK-INV-012
 
 ### Commit
 
 - Pending implementation
-
----
-
-## Traceability summary
-
-The task set is intentionally aligned with the approved requirements:
-
-- Domain contracts, CRUD item lifecycle, and validation: TASK-INV-001, TASK-INV-002
-- API and role enforcement for inventory items and movements: TASK-INV-003, TASK-INV-004
-- Derived stock, reorder logic, and visible back-office signal: TASK-INV-005
-- Correction event and immutability: TASK-INV-006
-- UI and operational workflow for item lifecycle and stock alerts: TASK-INV-007
-- Final acceptance verification: TASK-INV-008
-
-This file remains a task definition only. No implementation code is modified here.
