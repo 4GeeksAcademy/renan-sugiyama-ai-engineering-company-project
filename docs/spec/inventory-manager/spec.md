@@ -11,7 +11,8 @@ This document defines what the inventory manager for Nexova Solutions must do. I
 ### Included
 
 - Managing inventory items representing office materials used by Nexova Solutions.
-- Registering inventory movements for those items.
+- Creating, listing, viewing, updating, and removing inventory items with the item fields defined for this module.
+- Registering inventory movements for those items, including the movement reason and a recorded timestamp for each movement.
 - Supporting the movement concepts of incoming stock, outgoing stock, and stock adjustment.
 - Providing the current stock of an inventory item as a value derived from its movement history.
 - Identifying and listing inventory items whose current stock is below their reorder point.
@@ -49,17 +50,17 @@ The canonical role for this module is `inventory-manager`. Users with this role 
 ### Inventory item
 
 - **Purpose:** Represents an office material that Nexova needs to monitor.
-- **Relevant attributes:** Identity and name are required. Unit of measure and reorder point are optional; omitted values use the defaults defined below.
+- **Relevant attributes:** Identity, name, unit of measure, reorder point, and lifecycle metadata required by the module. Identity and name are required. Unit of measure and reorder point are optional; omitted values use the defaults defined below.
 - **Relationships:** An inventory item has zero or more inventory movements.
-- **Constraints:** The item must have an identity and name. When provided, its reorder point must be zero or greater and must use the item's unit of measure.
+- **Constraints:** The item must have an identity and name. When provided, its reorder point must be zero or greater and must use the item's unit of measure. Item updates and removals shall be validated against the same domain constraints.
 - **Allowed values:** The canonical concept name and code are defined in the terminology table above. Supported units of measure are defined below. Item categories, statuses, and business identifiers are not established.
 
 ### Inventory movement
 
 - **Purpose:** Records a stock-affecting event for one inventory item.
-- **Relevant attributes:** The affected inventory item, movement type, and quantity are required. A stock adjustment also requires a direction. The movement inherits the inventory item's unit of measure.
+- **Relevant attributes:** The affected inventory item, movement type, quantity, movement reason, and movement timestamp are required. A stock adjustment also requires a direction. The movement inherits the inventory item's unit of measure.
 - **Relationships:** Each movement belongs to exactly one inventory item.
-- **Constraints:** A movement must refer to an existing inventory item, use a supported movement type, contain a strictly positive quantity, and use the item's unit of measure.
+- **Constraints:** A movement must refer to an existing inventory item, use a supported movement type, contain a strictly positive quantity, contain a valid reason, include a recorded timestamp, and use the item's unit of measure.
 - **Allowed values:** The supported concepts are incoming stock (`incoming_stock`), outgoing stock (`outgoing_stock`), and stock adjustment (`stock_adjustment`).
 
 ### Movement types
@@ -108,24 +109,26 @@ Each inventory item shall use exactly one unit of measure. If no unit is provide
 10. An inventory item, its reorder point, and all of its movements shall use one consistent supported unit of measure.
 11. The system shall not convert quantities between units of measure.
 12. Inventory movement quantities shall be strictly positive and may be fractional.
-13. A reorder point shall be either `null` or zero or greater.
-14. An outgoing movement or decreasing stock adjustment that would produce negative stock shall be rejected.
-15. Registered movements shall remain immutable. A correction shall be represented by a compensating movement and an `InventoryMovementCorrected` domain event.
-16. Inventory-manager operations shall require the `inventory-manager` role.
+13. Every inventory movement shall include a valid reason and a recorded timestamp.
+14. A reorder point shall be either `null` or zero or greater.
+15. An outgoing movement or decreasing stock adjustment that would produce negative stock shall be rejected.
+16. Registered movements shall remain immutable. A correction shall be represented by a compensating movement and an `InventoryMovementCorrected` domain event.
+17. Inventory-manager operations shall require the `inventory-manager` role.
+18. Inventory items shall support creation, listing, viewing, updating, and removal within the module’s validation rules, without introducing a direct current-stock mutation path.
 
 ## Behavioral contracts
 
-### Inventory item creation
+### Inventory item lifecycle
 
-The system shall accept a request to create an office-material inventory item when its identity and name are valid. Omitted unit of measure shall default to `unit`; omitted reorder point shall remain `null`. The created item shall be available for movement registration and stock queries.
+The system shall support the lifecycle of office-material inventory items by allowing creation, listing, retrieval, update, and removal operations using the item fields defined for this module. Omitted unit of measure shall default to `unit`; omitted reorder point shall remain `null`. The created item shall be available for movement registration and stock queries.
 
-The system shall reject an item creation request when identity or name is missing or invalid, or when an optional reorder point is negative. The rejection shall identify the validation failure and shall not create a partially valid item.
+The system shall reject an item creation or update request when identity or name is missing or invalid, or when an optional reorder point is negative. The rejection shall identify the validation failure and shall not create or persist a partially valid item.
 
 ### Inventory movement registration
 
-The system shall accept a movement when it identifies an existing inventory item, uses one of the supported movement concepts, contains a strictly positive quantity, and, for stock adjustment, contains direction `increase` or `decrease`.
+The system shall accept a movement when it identifies an existing inventory item, uses one of the supported movement concepts, contains a strictly positive quantity, contains a valid reason, includes a recorded timestamp, and, for stock adjustment, contains direction `increase` or `decrease`.
 
-The system shall reject a movement that references an unknown item, uses an unsupported movement type, contains a non-positive quantity, has an invalid adjustment direction, or would produce negative stock. A rejected movement shall not affect current stock.
+The system shall reject a movement that references an unknown item, uses an unsupported movement type, contains a non-positive quantity, lacks a reason or timestamp, has an invalid adjustment direction, or would produce negative stock. A rejected movement shall not affect current stock.
 
 ### Current-stock query
 
@@ -139,7 +142,7 @@ The system shall preserve registered movements as immutable history. A correctio
 
 The system shall identify an inventory item as below reorder point only when its derived current stock is strictly less than its reorder point.
 
-The system shall support querying or listing inventory items whose reorder point is not `null` and whose derived current stock is below that reorder point. Results shall be ordered descending by `reorder_point - current_stock`, so the largest deficit appears first.
+The system shall support querying or listing inventory items whose reorder point is not `null` and whose derived current stock is below that reorder point. Results shall be ordered descending by `reorder_point - current_stock`, so the largest deficit appears first. The system shall provide a visible back-office signal when an item is below its reorder point.
 
 ### Authorization
 
@@ -153,16 +156,21 @@ The system shall allow inventory-manager operations only for users with the `inv
 - **AC-INV-002:** If an inventory item creation request contains a missing or invalid required attribute, then the system shall reject the request and shall not create the item.
 - **AC-INV-003:** When an inventory item is created without a unit of measure or reorder point, the system shall default the unit to `unit` and preserve the reorder point as `null`.
 - **AC-INV-019:** If an inventory item creation request contains a negative reorder point, then the system shall reject the request and shall not create the item.
+- **AC-INV-024:** The system shall create, list, retrieve, update, and remove inventory items using the defined item fields for identity, name, unit of measure, and reorder point.
+- **AC-INV-025:** When an inventory item is updated, the system shall apply only the allowed item fields and shall reject invalid updates without altering the movement history or derived current stock.
+- **AC-INV-026:** When an inventory item is removed, the system shall remove it from active inventory operations without modifying the historical movement records used to derive current stock.
 
 ### Movement management
 
 - **AC-INV-004:** The system shall accept inventory movements whose movement type is incoming stock, outgoing stock, or stock adjustment.
 - **AC-INV-005:** If an inventory movement references an inventory item that does not exist, then the system shall reject the movement and shall not change any current-stock result.
-- **AC-INV-006:** If an inventory movement has an unsupported movement type, non-positive quantity, or invalid adjustment direction, then the system shall reject the movement and shall not change any current-stock result.
+- **AC-INV-006:** If an inventory movement has an unsupported movement type, non-positive quantity, missing reason, missing timestamp, or invalid adjustment direction, then the system shall reject the movement and shall not change any current-stock result.
 - **AC-INV-007:** When a valid incoming-stock movement is registered, the system shall include its quantity as an increase in the affected item's derived current stock.
 - **AC-INV-008:** When a valid outgoing-stock movement is registered, the system shall include its quantity as a decrease in the affected item's derived current stock.
 - **AC-INV-009:** When a valid stock-adjustment movement is registered, the system shall apply its positive quantity in its declared direction through movement history when deriving the affected item's current stock.
 - **AC-INV-020:** If an outgoing movement or decreasing stock adjustment would produce negative stock, then the system shall reject the movement and shall not change the item's derived current stock.
+- **AC-INV-027:** The system shall require each inventory movement to include a reason and a recorded timestamp.
+- **AC-INV-028:** If an inventory movement is submitted without a reason or recorded timestamp, then the system shall reject the movement and shall not change the item's derived current stock.
 
 ### Stock invariant and current-stock evaluation
 
@@ -181,6 +189,7 @@ The system shall allow inventory-manager operations only for users with the `inv
 - **AC-INV-018:** If an inventory movement uses a unit of measure different from its inventory item, then the system shall reject the movement and shall not change the item's derived current stock.
 - **AC-INV-022:** If a registered movement is corrected, then the system shall preserve the original movement, append a compensating movement, and emit `InventoryMovementCorrected`.
 - **AC-INV-023:** If a request is made by a user without the `inventory-manager` role, then the system shall reject the request and shall not change inventory data.
+- **AC-INV-029:** When an inventory item is below its reorder point, the system shall show a visible back-office alert indicating the item requires replenishment.
 
 ## Open questions
 

@@ -34,11 +34,13 @@ The backend implementation will be organized to match the existing service conve
 
 ### In scope
 
+- Inventory item lifecycle: creation, retrieval, listing, updating, and removal with the defined item fields.
 - Inventory item domain model and validation.
-- Supported inventory movement types and unit-of-measure rules.
+- Supported inventory movement types, movement reason, movement timestamp, and unit-of-measure rules.
 - Derived current-stock logic from movement history.
 - Reorder-point threshold evaluation and below-reorder-point queries.
-- API and persistence validation rules for item creation, movement registration, and stock queries.
+- Visible back-office signal when an item is below its reorder point.
+- API and persistence validation rules for item lifecycle management, movement registration, and stock queries.
 - Authorization and role enforcement for inventory-manager actions.
 - Shared typed contracts used by backend and UI.
 
@@ -60,10 +62,10 @@ The model will include:
 - name;
 - unit of measure with default `unit` when omitted;
 - optional reorder point;
-- creation metadata;
+- lifecycle metadata needed for item creation, listing, updating, and removal;
 - relationship to its movement history.
 
-This supports AC-INV-001, AC-INV-002, AC-INV-003, AC-INV-017, and AC-INV-019.
+This supports AC-INV-001, AC-INV-002, AC-INV-003, AC-INV-017, AC-INV-019, AC-INV-024, AC-INV-025, and AC-INV-026.
 
 ### Inventory movement
 
@@ -72,12 +74,14 @@ The model will include:
 - inventory item reference;
 - movement type;
 - quantity;
+- reason;
+- recorded timestamp;
 - direction for stock adjustments;
-- timestamps and immutable record semantics.
+- immutable record semantics.
 
 The movement types are the canonical domain values already defined by the specification: `incoming_stock`, `outgoing_stock`, and `stock_adjustment`.
 
-This supports AC-INV-004, AC-INV-005, AC-INV-006, AC-INV-018, and AC-INV-020.
+This supports AC-INV-004, AC-INV-005, AC-INV-006, AC-INV-018, AC-INV-020, AC-INV-027, and AC-INV-028.
 
 ### Stock and reorder-point logic
 
@@ -138,11 +142,13 @@ The service will expose the operations required by the specification without cre
 
 - create inventory item;
 - list and fetch items;
-- register movement;
+- update inventory item metadata within the allowed fields;
+- remove or archive an inventory item from active operations;
+- register movement with reason and timestamp;
 - list/retrieve movement history for an item;
 - query current stock;
 - query below-reorder-point items;
-- reject invalid movement or authorization requests.
+- reject invalid movement, invalid item lifecycle operations, or authorization requests.
 
 The API must enforce that any stock value is derived from movement history, not persisted as a separate mutable field. The current-stock API is read-only and computed from movement events at query time.
 
@@ -181,24 +187,26 @@ The module will evaluate reorder-point status using the rule:
 - equal-to-threshold items are not considered below threshold;
 - `null` reorder points are excluded from alert lists.
 
-The below-threshold query will be ordered descending by `reorder_point - current_stock` so the largest stock deficit appears first.
+The below-threshold query will be ordered descending by `reorder_point - current_stock` so the largest stock deficit appears first. The back-office UI will surface an explicit visible signal for these items so operators can act before stock runs out.
 
-This supports AC-INV-014, AC-INV-015, and AC-INV-016.
+This supports AC-INV-014, AC-INV-015, AC-INV-016, and AC-INV-029.
 
 ## 11. UI and operational views
 
 The back-office UI will contain the minimal operational screens needed to validate the domain flow:
 
 - create inventory item form;
-- movement registration form with supported movement types;
-- item list and detail view;
+- list and detail view for inventory items;
+- update inventory item form using the defined item fields;
+- remove or archive action for an inactive item;
+- movement registration form with supported movement types, reason, and timestamp;
 - stock and reorder-point summaries;
-- below-reorder-point alert list;
+- visible below-reorder-point alert list;
 - validation feedback for invalid entities and movements.
 
 The UI must not expose a direct current-stock editing control. Any stock changes visible to users must be a consequence of movement registration and derived recalculation.
 
-This supports AC-INV-001, AC-INV-004, AC-INV-010, AC-INV-011, AC-INV-014, and AC-INV-016.
+This supports AC-INV-001, AC-INV-004, AC-INV-010, AC-INV-011, AC-INV-014, AC-INV-016, AC-INV-024, AC-INV-025, AC-INV-026, AC-INV-027, and AC-INV-029.
 
 ## 12. Test strategy
 
@@ -233,10 +241,10 @@ This plan is intentionally aligned with the approval gate in the spec, and the t
 
 The plan is structured to satisfy the spec’s EARS acceptance criteria as follows:
 
-- Item creation and defaults: AC-INV-001, AC-INV-002, AC-INV-003, AC-INV-019
-- Movement validation and supported types: AC-INV-004, AC-INV-005, AC-INV-006, AC-INV-017, AC-INV-018, AC-INV-020
+- Item lifecycle and defaults: AC-INV-001, AC-INV-002, AC-INV-003, AC-INV-019, AC-INV-024, AC-INV-025, AC-INV-026
+- Movement validation and supported types: AC-INV-004, AC-INV-005, AC-INV-006, AC-INV-017, AC-INV-018, AC-INV-020, AC-INV-027, AC-INV-028
 - Stock derivation and invariant: AC-INV-010, AC-INV-011, AC-INV-012, AC-INV-013, AC-INV-021
-- Reorder-point behavior: AC-INV-014, AC-INV-015, AC-INV-016
+- Reorder-point behavior and visibility: AC-INV-014, AC-INV-015, AC-INV-016, AC-INV-029
 - Correction and authorization: AC-INV-022, AC-INV-023
 
 ## 14. Delivery sequence
