@@ -2,9 +2,11 @@
 
 ## Status
 
-Stage 3: TASKS / Implementation through TASK-INV-010
+Stage 3: TASKS / Implementation through TASK-INV-012
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-010 are implemented; later tasks remain pending.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-012 are implemented; TASK-INV-013 remains pending.
+
+Cross-task integration follow-up: `43f7387` (`adjusts`; CORS and route registration fixes).
 
 ---
 
@@ -201,7 +203,7 @@ Completed
 
 ### Commit
 
-- Pending implementation
+- `ee3f11b` (`TASK-INV-006`)
 
 ## TASK-INV-007
 
@@ -224,13 +226,11 @@ Completed
 - AC-INV-014
 - AC-INV-015
 
-Pending commit
-
 ### Dependencies
 
 ### Commit
 
-- Pending implementation
+- `cd1c3d3` (`TASK-INV-007`)
 
 ## TASK-INV-008
 
@@ -261,7 +261,7 @@ Completed
 
 ### Commit
 
-- Pending implementation
+- `fe67660` (`TASK-INV-008`)
 
 ## TASK-INV-009
 
@@ -290,7 +290,7 @@ Completed
 
 ### Commit
 
-- Pending implementation
+- `79b9c19` (`TASK-INV-009`)
 
 ## TASK-INV-010
 
@@ -299,8 +299,6 @@ Implement back-office inventory item lifecycle screens.
 ### Status
 
 Completed
-
-- Pending commit
 
 - Add item create, list, detail, update, and remove/archive views.
 - Show API validation errors for item lifecycle operations.
@@ -320,7 +318,7 @@ Completed
 
 ### Commit
 
-- Pending implementation
+- `5447ec8` (`TASK-INV-010`)
 
 ## TASK-INV-011
 
@@ -348,7 +346,7 @@ Implement the back-office movement registration screen.
 
 ### Commit
 
-- Pending implementation
+- `24f842d` (`TASK-INV-011`)
 
 ## TASK-INV-012
 
@@ -376,7 +374,7 @@ Expose derived stock and below-reorder-point signals in the back office.
 
 ### Commit
 
-- Pending implementation
+- `c08f4de` (`TASK-INV-012`)
 
 ## TASK-INV-013
 
