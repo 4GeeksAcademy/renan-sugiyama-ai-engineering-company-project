@@ -9,6 +9,7 @@ from app.routers import inventory_items, inventory_movements
 app = FastAPI(title="Nexova Inventory API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"^http://(localhost|127\.0\.0\.1):(?:4173|517\d+)$",
     allow_origins=[
         "http://localhost:4173",
         "http://127.0.0.1:4173",

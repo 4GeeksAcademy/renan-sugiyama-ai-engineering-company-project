@@ -78,6 +78,16 @@ export function App() {
         <Routes>
           <Route path="/" element={<InventoryItemsPage />} />
           <Route path="/new" element={<InventoryItemFormPage />} />
+          <Route path="/inventory" element={<InventoryItemsPage />} />
+          <Route path="/inventory/new" element={<InventoryItemFormPage />} />
+          <Route
+            path="/inventory/:itemId/edit"
+            element={<InventoryItemFormPage />}
+          />
+          <Route
+            path="/inventory/:itemId"
+            element={<InventoryItemDetailPage />}
+          />
           <Route path="/movements/new" element={<InventoryMovementPage />} />
           <Route path="/:itemId/edit" element={<InventoryItemFormPage />} />
           <Route path="/:itemId" element={<InventoryItemDetailPage />} />

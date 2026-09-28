@@ -64,7 +64,6 @@ def list_items() -> InventoryItemListResponse:
     return InventoryItemListResponse(items=[row_to_inventory_item(row) for row in rows])
 
 
-@router.get("/{item_id}", response_model=InventoryItemResponse)
 @router.get("/below-reorder-point", response_model=InventoryItemListResponse)
 def list_items_below_reorder_point() -> InventoryItemListResponse:
     with closing(connect()) as connection:
