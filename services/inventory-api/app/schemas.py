@@ -103,6 +103,26 @@ class InventoryMovementResponse(BaseModel):
     created_at: datetime
 
 
+class InventoryMovementCorrectionCreate(BaseModel):
+    reason: str = Field(min_length=1)
+    recorded_at: datetime
+
+    @field_validator("reason")
+    @classmethod
+    def reject_blank_reason(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("must not be blank")
+        return value
+
+
+class InventoryMovementCorrectedEvent(BaseModel):
+    id: str
+    event_type: Literal["InventoryMovementCorrected"] = "InventoryMovementCorrected"
+    original_movement_id: str
+    compensating_movement: InventoryMovementResponse
+    occurred_at: datetime
+
+
 def validate_movement_unit(
     item_unit: InventoryUnit,
     movement_unit: InventoryUnit,

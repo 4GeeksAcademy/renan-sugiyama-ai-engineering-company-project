@@ -2,9 +2,9 @@
 
 ## Status
 
-Stage 3: TASKS / Implementation through TASK-INV-008
+Stage 3: TASKS / Implementation through TASK-INV-009
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-008 are implemented; later tasks remain pending.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-009 are implemented; later tasks remain pending.
 
 ---
 
@@ -269,6 +269,10 @@ Completed
 
 Implement immutable movement correction handling.
 
+### Status
+
+Completed
+
 ### Changes
 
 - Preserve the original movement.
@@ -280,24 +284,18 @@ Implement immutable movement correction handling.
 
 ### Verification
 
-- Integration: correction retains the original movement, appends the compensating movement, and emits the correction event.
-
 ### Dependencies
 
-- TASK-INV-005
 - TASK-INV-006
 
 ### Commit
-
 - Pending implementation
 
 ## TASK-INV-010
 
-### Objective
-
 Implement back-office inventory item lifecycle screens.
 
-### Changes
+- Pending commit
 
 - Add item create, list, detail, update, and remove/archive views.
 - Show API validation errors for item lifecycle operations.
