@@ -2,9 +2,9 @@
 
 ## Status
 
-Stage 3: TASKS / Implementation through TASK-INV-007
+Stage 3: TASKS / Implementation through TASK-INV-008
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-007 are implemented; later tasks remain pending.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-008 are implemented; later tasks remain pending.
 
 ---
 
@@ -237,6 +237,10 @@ Pending commit
 ### Objective
 
 Prevent direct current-stock mutation.
+
+### Status
+
+Completed
 
 ### Changes
 

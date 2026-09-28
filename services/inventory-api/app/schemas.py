@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -14,7 +15,16 @@ InventoryMovementType = Literal[
 InventoryAdjustmentDirection = Literal["increase", "decrease"]
 
 
-class InventoryItemCreate(BaseModel):
+class _InventoryItemRequest(BaseModel):
+    @model_validator(mode="before")
+    @classmethod
+    def reject_current_stock_mutation(cls, value: Any) -> Any:
+        if isinstance(value, dict) and "current_stock" in value:
+            raise ValueError("current_stock is derived and cannot be set")
+        return value
+
+
+class InventoryItemCreate(_InventoryItemRequest):
     id: str = Field(min_length=1)
     name: str = Field(min_length=1)
     unit: InventoryUnit = "unit"
@@ -28,7 +38,7 @@ class InventoryItemCreate(BaseModel):
         return value
 
 
-class InventoryItemUpdate(BaseModel):
+class InventoryItemUpdate(_InventoryItemRequest):
     name: str | None = Field(default=None, min_length=1)
     unit: InventoryUnit | None = None
     reorder_point: float | None = Field(default=None, ge=0)
