@@ -11,6 +11,7 @@ import {
   InventoryItemFormPage,
   InventoryItemsPage,
 } from "./pages/InventoryItemsPage";
+import { InventoryMovementPage } from "./pages/InventoryMovementPage";
 
 export function App() {
   const location = useLocation();
@@ -35,6 +36,12 @@ export function App() {
             to="/"
           >
             <span className="nav-icon">▤</span> Inventory items
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+            to="/movements/new"
+          >
+            <span className="nav-icon">↕</span> Register movement
           </NavLink>
           <button
             className="nav-item"
@@ -71,6 +78,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<InventoryItemsPage />} />
           <Route path="/new" element={<InventoryItemFormPage />} />
+          <Route path="/movements/new" element={<InventoryMovementPage />} />
           <Route path="/:itemId/edit" element={<InventoryItemFormPage />} />
           <Route path="/:itemId" element={<InventoryItemDetailPage />} />
         </Routes>

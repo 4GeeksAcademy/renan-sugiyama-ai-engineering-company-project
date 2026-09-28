@@ -253,7 +253,8 @@ td {
   font-weight: 600;
 }
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
   width: 100%;
   padding: 11px;
   color: var(--ink);
@@ -261,6 +262,38 @@ td {
   border: 1px solid var(--line);
   border-radius: 5px;
   outline-color: var(--green);
+}
+.form-field input[readonly] {
+  color: var(--muted);
+  background: #f1f4f0;
+}
+.form-field textarea {
+  resize: vertical;
+}
+.form-field [aria-invalid="true"] {
+  border-color: var(--red);
+}
+.field-error {
+  color: var(--red);
+  font-size: 11px;
+}
+.movement-panel {
+  max-width: 900px;
+}
+.movement-form {
+  display: grid;
+  gap: 16px;
+}
+.movement-reason {
+  grid-column: 1 / -1;
+}
+.movement-success {
+  padding: 11px 13px;
+  margin: 0;
+  color: var(--green);
+  background: var(--mint);
+  border-radius: 5px;
+  font-size: 13px;
 }
 .form-actions,
 .action-row {

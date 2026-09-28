@@ -32,6 +32,44 @@ export type InventoryItemCreate = {
 
 export type InventoryItemUpdate = Omit<InventoryItemCreate, "id">;
 
+export type InventoryMovementType =
+  | "incoming_stock"
+  | "outgoing_stock"
+  | "stock_adjustment";
+
+export type InventoryMovement = {
+  id: string;
+  item_id: string;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  recorded_at: string;
+  unit: InventoryUnit;
+  direction: "increase" | "decrease" | null;
+  created_at: string;
+};
+
+export type InventoryMovementCreate = {
+  item_id: string;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  recorded_at: string;
+  unit: InventoryUnit;
+  direction: "increase" | "decrease" | null;
+};
+
+export class InventoryApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly fieldErrors: Record<string, string>,
+  ) {
+    super(message);
+    this.name = "InventoryApiError";
+  }
+}
+
 function formatErrorDetail(detail: unknown): string {
   if (typeof detail === "string") return detail;
   if (Array.isArray(detail)) {
@@ -58,9 +96,34 @@ export async function inventoryApi<T>(
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(
-      formatErrorDetail((result as { detail?: unknown } | null)?.detail) ||
-        `Request failed (${response.status})`,
+    const detail = (result as { detail?: unknown } | null)?.detail;
+    const fieldErrors: Record<string, string> = {};
+    if (Array.isArray(detail)) {
+      for (const entry of detail) {
+        if (!entry || typeof entry !== "object") continue;
+        const issue = entry as { loc?: unknown[]; msg?: string };
+        const field = issue.loc?.at(-1);
+        if (field) {
+          const key = String(field);
+          fieldErrors[key] = fieldErrors[key]
+            ? `${fieldErrors[key]}; ${issue.msg || "Invalid value"}`
+            : issue.msg || "Invalid value";
+        }
+      }
+    } else if (typeof detail === "string") {
+      const message = detail.toLowerCase();
+      if (message.includes("negative stock") || message.includes("quantity")) {
+        fieldErrors.quantity = detail;
+      } else if (message.includes("unit")) {
+        fieldErrors.unit = detail;
+      } else if (message.includes("item")) {
+        fieldErrors.item_id = detail;
+      }
+    }
+    throw new InventoryApiError(
+      formatErrorDetail(detail) || `Request failed (${response.status})`,
+      response.status,
+      fieldErrors,
     );
   }
   return (response.status === 204 ? null : result) as T;
