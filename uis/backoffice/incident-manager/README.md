@@ -1,22 +1,4 @@
-# Back-office applications
-
-Incident management and inventory management are separate Vite projects. Each has its own dependencies, build output, API configuration, and development server.
-
-## Incident manager
-
-```sh
-cd incident-manager
-npm install
-npm run dev
-```
-
-## Inventory manager
-
-````sh
-cd inventory-manager
-npm install
-npm run dev
-```# Nexova incident back office
+# Nexova incident back office
 
 TypeScript React back office for phase 4 of the incident-management plan. It uses Vite, React Router, Zustand for UI state, and TanStack Query for server state and cache invalidation.
 
@@ -31,6 +13,6 @@ The UI sends `X-Backoffice-User: local-user` by default. Create that active loca
 
 ```sql
 INSERT OR IGNORE INTO backoffice_users (id, role) VALUES ('local-user', 'backoffice');
-````
+```
 
 Set `window.INCIDENT_API_URL` before loading `app.tsx` when the API is hosted elsewhere.

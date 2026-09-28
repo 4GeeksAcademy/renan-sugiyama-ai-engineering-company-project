@@ -1,4 +1,4 @@
-import { Link, Routes, Route, useNavigate } from "react-router-dom";
+import { NavLink, Routes, Route, useNavigate } from "react-router-dom";
 import { queryClient } from "../api/queryClient";
 import { useUiStore } from "../store/uiStore";
 import { IncidentQueuePage } from "../pages/IncidentQueuePage";
@@ -20,9 +20,13 @@ export function AppShell() {
         </div>
         <p className="eyebrow">Customer support</p>
         <nav aria-label="Primary navigation">
-          <Link className="nav-item active" to="/">
+          <NavLink
+            className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+            end
+            to="/"
+          >
             <span className="nav-icon">▦</span> Incidents
-          </Link>
+          </NavLink>
           <button
             className="nav-item"
             type="button"
