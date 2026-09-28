@@ -26,6 +26,14 @@ function formatQuantity(value: number | null, unit: string): string {
     : `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 3 }).format(value)} ${unit}`;
 }
 
+function isBelowReorderPoint(item: InventoryItem): boolean {
+  return (
+    item.current_stock !== null &&
+    item.reorder_point !== null &&
+    item.current_stock < item.reorder_point
+  );
+}
+
 function ItemError({ message }: { message: string }) {
   return (
     <p className="inventory-error" role="alert">
@@ -73,6 +81,7 @@ export function InventoryItemsPage() {
                 <th>Unit</th>
                 <th>Reorder point</th>
                 <th>Current stock</th>
+                <th>Stock signal</th>
               </tr>
             </thead>
             <tbody>
@@ -94,6 +103,15 @@ export function InventoryItemsPage() {
                       : formatQuantity(item.reorder_point, item.unit)}
                   </td>
                   <td>{formatQuantity(item.current_stock, item.unit)}</td>
+                  <td>
+                    {isBelowReorderPoint(item) ? (
+                      <span className="reorder-signal">
+                        Replenishment needed
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -326,6 +344,13 @@ export function InventoryItemDetailPage() {
       </div>
       {archiveMutation.error && (
         <ItemError message={archiveMutation.error.message} />
+      )}
+      {isBelowReorderPoint(item) && (
+        <p className="reorder-signal reorder-signal-banner" role="alert">
+          Replenishment needed: current stock of{" "}
+          {formatQuantity(item.current_stock, item.unit)} is below the reorder
+          point of {formatQuantity(item.reorder_point, item.unit)}.
+        </p>
       )}
       <div className="inventory-detail-grid">
         <div>
