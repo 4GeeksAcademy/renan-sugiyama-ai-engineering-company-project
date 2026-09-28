@@ -2,9 +2,9 @@
 
 ## Status
 
-Stage 3: TASKS / Implementation through TASK-INV-009
+Stage 3: TASKS / Implementation through TASK-INV-010
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-009 are implemented; later tasks remain pending.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-010 are implemented; later tasks remain pending.
 
 ---
 
@@ -289,11 +289,16 @@ Completed
 - TASK-INV-006
 
 ### Commit
+
 - Pending implementation
 
 ## TASK-INV-010
 
 Implement back-office inventory item lifecycle screens.
+
+### Status
+
+Completed
 
 - Pending commit
 
