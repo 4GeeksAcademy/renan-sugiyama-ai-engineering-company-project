@@ -2,9 +2,9 @@
 
 ## Status
 
-Stage 3: TASKS
+Stage 3: TASKS / Implementation through TASK-INV-006
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. No implementation work is started here.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-006 are implemented; later tasks remain pending.
 
 ---
 
@@ -12,23 +12,18 @@ This document defines the execution-level tasks required to satisfy the approved
 
 ### Objective
 
-Define shared inventory item contracts and field-level validation.
+### Status
 
-### Changes
-
-- Add item types, supported units, default unit, and reorder-point validation in `packages/shared`.
-- Add contract tests for item identity, name, unit, and reorder-point inputs.
-
-### Acceptance Criteria
+Completed
 
 - AC-INV-002
 - AC-INV-003
-- AC-INV-017
 - AC-INV-019
 
 ### Verification
 
 - Unit: invalid required fields, unsupported units, and negative reorder points are rejected; omitted values receive the defined defaults.
+  Pending commit
 
 ### Dependencies
 
@@ -36,13 +31,17 @@ Define shared inventory item contracts and field-level validation.
 
 ### Commit
 
-- Pending implementation
+- `b85ecfb` (`task 1: completed`)
 
 ## TASK-INV-002
 
 ### Objective
 
 Implement the inventory item lifecycle API.
+
+### Status
+
+Completed
 
 ### Changes
 
@@ -66,13 +65,17 @@ Implement the inventory item lifecycle API.
 
 ### Commit
 
-- Pending implementation
+- `84e9f2d` (`TASK-INV-002`)
 
 ## TASK-INV-003
 
 ### Objective
 
 Enforce the inventory-manager role for inventory operations.
+
+### Status
+
+Completed
 
 ### Changes
 
@@ -93,13 +96,17 @@ Enforce the inventory-manager role for inventory operations.
 
 ### Commit
 
-- Pending implementation
+- `288fa0a` (`TASK-INV-003`)
 
 ## TASK-INV-004
 
 ### Objective
 
 Define shared inventory movement contracts and payload validation.
+
+### Status
+
+Completed
 
 ### Changes
 
@@ -124,13 +131,17 @@ Define shared inventory movement contracts and payload validation.
 
 ### Commit
 
-- Pending implementation
+- `350b47a` (`TASK-INV-004`)
 
 ## TASK-INV-005
 
 ### Objective
 
 Register valid inventory movements and enforce negative-stock safety.
+
+### Status
+
+Completed
 
 ### Changes
 
@@ -153,13 +164,17 @@ Register valid inventory movements and enforce negative-stock safety.
 
 ### Commit
 
-- Pending implementation
+- `48c3492` (`TASK-INV-005`)
 
 ## TASK-INV-006
 
 ### Objective
 
 Implement current-stock derivation from movement history.
+
+### Status
+
+Completed
 
 ### Changes
 

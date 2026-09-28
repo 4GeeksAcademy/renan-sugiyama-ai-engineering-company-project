@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.db import connect, row_to_inventory_movement, utc_now
+from app.db import MOVEMENT_STOCK_DELTA_SQL, connect, row_to_inventory_movement, utc_now
 from app.dependencies import inventory_manager_user
 from app.schemas import (
     InventoryMovementCreate,
@@ -55,17 +55,10 @@ def register_movement(payload: InventoryMovementCreate) -> InventoryMovementResp
                 ) from error
 
             current_stock = connection.execute(
-                """
-                SELECT COALESCE(SUM(
-                    CASE
-                        WHEN type = 'incoming_stock' THEN quantity
-                        WHEN type = 'outgoing_stock' THEN -quantity
-                        WHEN direction = 'increase' THEN quantity
-                        ELSE -quantity
-                    END
-                ), 0) AS current_stock
-                FROM inventory_movements
-                WHERE item_id = ?
+                f"""
+                SELECT COALESCE(SUM({MOVEMENT_STOCK_DELTA_SQL}), 0) AS current_stock
+                FROM inventory_movements AS movement
+                WHERE movement.item_id = ?
                 """,
                 (payload.item_id,),
             ).fetchone()["current_stock"]

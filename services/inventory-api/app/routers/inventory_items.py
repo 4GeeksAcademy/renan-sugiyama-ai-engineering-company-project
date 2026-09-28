@@ -4,7 +4,7 @@ from contextlib import closing
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.db import connect, row_to_inventory_item, utc_now
+from app.db import INVENTORY_ITEM_SELECT, connect, row_to_inventory_item, utc_now
 from app.dependencies import inventory_manager_user
 from app.schemas import (
     InventoryItemCreate,
@@ -49,7 +49,7 @@ def create_item(payload: InventoryItemCreate) -> InventoryItemResponse:
                 ) from error
             raise
         row = connection.execute(
-            "SELECT * FROM inventory_items WHERE id = ? AND active = 1",
+            INVENTORY_ITEM_SELECT + " WHERE id = ? AND active = 1",
             (payload.id,),
         ).fetchone()
     return row_to_inventory_item(row)
@@ -59,7 +59,7 @@ def create_item(payload: InventoryItemCreate) -> InventoryItemResponse:
 def list_items() -> InventoryItemListResponse:
     with closing(connect()) as connection:
         rows = connection.execute(
-            "SELECT * FROM inventory_items WHERE active = 1 ORDER BY name ASC, id ASC"
+            INVENTORY_ITEM_SELECT + " WHERE active = 1 ORDER BY name ASC, id ASC"
         ).fetchall()
     return InventoryItemListResponse(items=[row_to_inventory_item(row) for row in rows])
 
@@ -68,7 +68,7 @@ def list_items() -> InventoryItemListResponse:
 def get_item(item_id: str) -> InventoryItemResponse:
     with closing(connect()) as connection:
         row = connection.execute(
-            "SELECT * FROM inventory_items WHERE id = ? AND active = 1",
+            INVENTORY_ITEM_SELECT + " WHERE id = ? AND active = 1",
             (item_id,),
         ).fetchone()
     if row is None:
@@ -101,7 +101,7 @@ def update_item(item_id: str, payload: InventoryItemUpdate) -> InventoryItemResp
             )
         connection.commit()
         row = connection.execute(
-            "SELECT * FROM inventory_items WHERE id = ? AND active = 1",
+            INVENTORY_ITEM_SELECT + " WHERE id = ? AND active = 1",
             (item_id,),
         ).fetchone()
     return row_to_inventory_item(row)

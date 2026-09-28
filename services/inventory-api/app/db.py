@@ -8,6 +8,27 @@ from pathlib import Path
 from app.constants import DATABASE_PATH
 from app.schemas import InventoryItemResponse, InventoryMovementResponse
 
+MOVEMENT_STOCK_DELTA_SQL = """
+CASE
+    WHEN movement.type = 'incoming_stock' THEN movement.quantity
+    WHEN movement.type = 'outgoing_stock' THEN -movement.quantity
+    WHEN movement.direction = 'increase' THEN movement.quantity
+    ELSE -movement.quantity
+END
+"""
+
+INVENTORY_ITEM_SELECT = f"""
+SELECT inventory_items.*,
+       (
+           SELECT CASE WHEN COUNT(*) = 0 THEN NULL
+                       ELSE SUM({MOVEMENT_STOCK_DELTA_SQL})
+                  END
+           FROM inventory_movements AS movement
+           WHERE movement.item_id = inventory_items.id
+       ) AS current_stock
+FROM inventory_items
+"""
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -43,7 +64,6 @@ def initialize_database() -> None:
 
 def row_to_inventory_item(row: sqlite3.Row) -> InventoryItemResponse:
     item = dict(row)
-    item["current_stock"] = None
     item["active"] = bool(item["active"])
     return InventoryItemResponse(**item)
 
