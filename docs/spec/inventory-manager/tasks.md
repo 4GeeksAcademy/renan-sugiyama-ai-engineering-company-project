@@ -2,9 +2,9 @@
 
 ## Status
 
-Stage 3: TASKS / Implementation through TASK-INV-006
+Stage 3: TASKS / Implementation through TASK-INV-007
 
-This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-006 are implemented; later tasks remain pending.
+This document defines the execution-level tasks required to satisfy the approved Inventory Manager Spec and Plan. These tasks are intentionally small, testable, and traceable to the approved requirements. TASK-INV-001 through TASK-INV-007 are implemented; later tasks remain pending.
 
 ---
 
@@ -209,6 +209,10 @@ Completed
 
 Implement below-reorder-point evaluation and ordering.
 
+### Status
+
+Completed
+
 ### Changes
 
 - Identify items strictly below a non-null reorder point.
@@ -219,15 +223,10 @@ Implement below-reorder-point evaluation and ordering.
 
 - AC-INV-014
 - AC-INV-015
-- AC-INV-016
 
-### Verification
-
-- Integration: query results contain only below-threshold items and are ordered by `reorder_point - current_stock` descending.
+Pending commit
 
 ### Dependencies
-
-- TASK-INV-006
 
 ### Commit
 

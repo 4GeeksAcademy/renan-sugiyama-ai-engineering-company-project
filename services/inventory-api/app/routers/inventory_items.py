@@ -65,6 +65,26 @@ def list_items() -> InventoryItemListResponse:
 
 
 @router.get("/{item_id}", response_model=InventoryItemResponse)
+@router.get("/below-reorder-point", response_model=InventoryItemListResponse)
+def list_items_below_reorder_point() -> InventoryItemListResponse:
+    with closing(connect()) as connection:
+        rows = connection.execute(
+            f"""
+            SELECT *
+            FROM ({INVENTORY_ITEM_SELECT}) AS inventory_item
+            WHERE inventory_item.active = 1
+              AND inventory_item.reorder_point IS NOT NULL
+              AND inventory_item.current_stock IS NOT NULL
+              AND inventory_item.current_stock < inventory_item.reorder_point
+            ORDER BY inventory_item.reorder_point - inventory_item.current_stock DESC,
+                     inventory_item.name ASC,
+                     inventory_item.id ASC
+            """
+        ).fetchall()
+    return InventoryItemListResponse(items=[row_to_inventory_item(row) for row in rows])
+
+
+@router.get("/{item_id}", response_model=InventoryItemResponse)
 def get_item(item_id: str) -> InventoryItemResponse:
     with closing(connect()) as connection:
         row = connection.execute(
