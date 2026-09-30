@@ -1,0 +1,171 @@
+.heroSection {
+  padding: 72px 0 48px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.heroCopy h1 {
+  max-width: 620px;
+  font-size: clamp(2.8rem, 5vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.08em;
+}
+
+.heroCopy p {
+  max-width: 620px;
+  font-size: 1.08rem;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  padding-top: 12px;
+}
+
+.heroMeta div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroMeta strong {
+  font-size: 1.8rem;
+  letter-spacing: -0.05em;
+}
+
+.heroMeta span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.heroPanel {
+  padding: 22px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+
+.signalPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(21, 93, 69, 0.12);
+  color: var(--green);
+  font-weight: 700;
+}
+
+.panelMetricRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  padding: 18px 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.metricLabel {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: "Space Mono", monospace;
+}
+
+.metricValue {
+  margin-top: 6px;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+.metricDelta {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.metricDelta.positive {
+  color: var(--green);
+}
+
+.miniGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.miniCard {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.miniCard.accent {
+  background: rgba(216, 109, 54, 0.06);
+}
+
+.miniLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-family: "Space Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.miniCard strong {
+  display: block;
+  font-size: 1.8rem;
+  line-height: 1.1;
+  letter-spacing: -0.06em;
+}
+
+.miniCard small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.detailList {
+  margin: 22px 0 0;
+  padding-left: 18px;
+  color: var(--ink);
+}
+
+.detailList li + li {
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+}
