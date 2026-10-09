@@ -1,0 +1,130 @@
+:root {
+  --ink: #17211b;
+  --muted: #6e776f;
+  --line: #dfe5df;
+  --paper: #f5f7f3;
+  --white: #ffffff;
+  --green: #155d45;
+  --mint: #d9eee2;
+  --orange: #d86d36;
+  --red: #b8443f;
+  --yellow: #c58b24;
+  --shadow: 0 18px 50px rgba(31, 49, 38, 0.08);
+  --maxWidth: 1200px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.container {
+  width: min(var(--maxWidth), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 14px;
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--ink);
+  letter-spacing: -0.06em;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+}
+
+.sectionIntro {
+  max-width: 720px;
+  font-size: 1.06rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.85rem 1.3rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.primaryButton {
+  background: var(--orange);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.secondaryButton {
+  background: var(--mint);
+  color: var(--green);
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+}
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 700px) {
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+  }
+}

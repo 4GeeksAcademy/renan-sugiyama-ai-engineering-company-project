@@ -1,0 +1,155 @@
+.sectionWrap {
+  padding: 84px 0;
+}
+
+.altSection {
+  background: rgba(21, 93, 69, 0.04);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 18px;
+  margin-bottom: 28px;
+}
+
+.sectionHeader.narrow {
+  display: block;
+  margin-bottom: 28px;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.serviceCard {
+  padding: 24px;
+}
+
+.serviceBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(21, 93, 69, 0.08);
+  color: var(--green);
+  font-family: "Space Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.serviceCard h3 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  letter-spacing: -0.05em;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.metricCard {
+  padding: 22px 20px;
+}
+
+.metricValue {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+.metricLabelText {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.highlightRow {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.advantageList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.advantageList li {
+  position: relative;
+  padding: 16px 18px 16px 46px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+}
+
+.advantageList li::before {
+  content: "✓";
+  position: absolute;
+  inset: 16px auto auto 18px;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.siteFooter {
+  padding: 0 0 96px;
+}
+
+.footerBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px 28px;
+  border-radius: 16px;
+}
+
+.smallTitle {
+  max-width: 620px;
+  font-size: clamp(2rem, 3vw, 3rem);
+}
+
+.footerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .sectionHeader,
+  .highlightRow,
+  .footerBlock {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .serviceGrid,
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .sectionWrap {
+    padding: 64px 0;
+  }
+
+  .footerBlock {
+    padding: 20px 18px;
+  }
+}
