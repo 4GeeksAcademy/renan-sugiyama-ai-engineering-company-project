@@ -11,4 +11,4 @@ React, and TypeScript. It is separate from the API-connected incident manager.
 - `npm run build`
 - `npm run start`
 
-The development and production servers use port `4173`.
+The development and production servers use port `3001`.
