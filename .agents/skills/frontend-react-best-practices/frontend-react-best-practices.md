@@ -10,6 +10,12 @@ This skill defines the default frontend development standards for React applicat
 
 ## Core decisions
 
+### Framework standard for new applications
+
+- Every new standalone React frontend application under `uis/` must use Next.js with the App Router and TypeScript.
+- Do not choose Vite for a new frontend application. The incident manager and inventory manager are existing Vite applications and remain exceptions; do not migrate them unless that work is explicitly requested.
+- App Router pages and layouts are Server Components by default. Add `"use client"` only to components that require client-side state, effects, event handlers, or browser APIs.
+
 ### 1) Zustand for client state
 
 Use Zustand for local, UI-driven client state that is not server-owned and does not need to be cached across network responses.
@@ -112,6 +118,11 @@ A typical frontend structure should be:
 
 ```txt
 src/
+  app/
+    layout.tsx
+    page.tsx
+    incidents/
+      page.tsx
   api/
     client.ts
     incidents.ts
@@ -134,17 +145,12 @@ src/
   lib/
     formatters.ts
     validators.ts
-  pages/
-    DashboardPage.tsx
-    IncidentDetailPage.tsx
   store/
     uiStore.ts
   styles/
     tokens.css
   types/
     index.ts
-  App.tsx
-  main.tsx
 ```
 
 ## Interpretation for this repo
@@ -156,7 +162,7 @@ The project already follows a folder-by-responsibility model. The frontend app s
 - `features/` groups domain-feature logic and related files
 - `hooks/` contains reusable logic and custom hooks
 - `lib/` contains generic utilities and supporting functions
-- `pages/` contains top-level route screens
+- `app/` contains App Router layouts, route screens, and route handlers
 - `store/` contains Zustand stores for client state
 - `types/` contains shared app interfaces and contracts
 - CSS Modules stay close to the component or feature they style
@@ -165,6 +171,7 @@ The project already follows a folder-by-responsibility model. The frontend app s
 
 A frontend change is compliant only if it follows this pattern:
 
+- new standalone React applications use Next.js App Router and TypeScript
 - server state is handled by TanStack Query
 - client-only state is handled by Zustand
 - styling uses CSS Modules

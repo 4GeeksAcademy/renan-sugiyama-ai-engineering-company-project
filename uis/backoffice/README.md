@@ -1,6 +1,9 @@
 # Back-office applications
 
-Incident management and inventory management are separate Vite projects. Each has its own dependencies, build output, API configuration, and development server.
+The incident manager and inventory manager are existing Vite projects; the
+operations dashboard uses Next.js App Router. New standalone frontend
+applications must use Next.js App Router and TypeScript. Each package has its
+own dependencies, build output, API configuration, and development server.
 
 ## Incident manager
 

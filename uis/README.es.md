@@ -2,6 +2,13 @@
 
 Esta carpeta contiene **todos los proyectos con interfaz de usuario** para el proyecto transversal de AI Engineering de la compañía — por ejemplo: un sitio web público, un frontend de panel de administración, una interfaz de ecommerce, portales para clientes, aplicaciones Streamlit/Gradio u otras herramientas sólo-frontend.
 
+## Estándar de framework frontend
+
+Las nuevas aplicaciones frontend React independientes dentro de `uis/` deben
+usar Next.js App Router y TypeScript. El gestor de incidentes y el gestor de
+inventario son aplicaciones Vite existentes y constituyen excepciones a este
+estándar; no se debe elegir Vite para nuevas aplicaciones.
+
 Los dos proyectos principales que se almacenan aquí son:
 
 - **`website`** — la presencia web pública de la compañía.

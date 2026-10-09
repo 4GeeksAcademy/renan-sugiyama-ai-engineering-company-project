@@ -29,7 +29,8 @@ This indicates a TypeScript-first approach for shared models and contracts.
 
 ### Frontend: incident back office
 
-The incident-management back office is implemented under `uis/backoffice` as a
+The incident-management back office is implemented under
+`uis/backoffice/incident-manager` as a
 TypeScript React application.
 
 - React and React DOM for the component-based UI.
@@ -61,6 +62,13 @@ the App Router, React 19, and TypeScript. The homepage is statically rendered;
 its shared sections and styles live under `src/components`, `src/site`, and
 `src/styles.css`. Its local commands are `npm run dev`, `npm run typecheck`,
 `npm run build`, and `npm run start` from `uis/website`.
+
+### Frontend: operations dashboard
+
+The static operations overview under `uis/backoffice/dashboard` uses Next.js 16
+App Router, React 19, and TypeScript. It is separate from the API-connected
+incident manager. Run `npm run dev`, `npm run typecheck`, `npm run build`, or
+`npm run start` from that package; its server uses port `4173`.
 
 ### Intended runtime model
 
@@ -98,7 +106,7 @@ Implemented for the incident-management scope:
 
 - FastAPI incident service under `services/incident-api`
 - SQLite persistence and catalog repair migrations
-- TypeScript React back office under `uis/backoffice`
+- TypeScript React incident manager under `uis/backoffice/incident-manager`
 - Shared TypeScript incident contracts under `packages/shared`
 - API contract tests and frontend typecheck/build scripts
 
@@ -106,10 +114,17 @@ Implemented for the incident-management scope:
 
 - API setup and run: `cd services/incident-api`, create/activate a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
 - API tests: `PYTHONPATH=. pytest` from `services/incident-api`.
-- Back office setup and run: `cd uis/backoffice`, `npm install`, then `npm run dev`.
-- Back office checks: `npm run typecheck` and `npm run build`.
+- Incident manager setup and run: `cd uis/backoffice/incident-manager`, `npm install`, then `npm run dev`.
+- Incident-manager checks: `npm run typecheck` and `npm run build`.
 
-The API is mounted from `services/incident-api/app/main.py` and exposes health, catalogs, incidents, and summary routers. SQLite stores incidents, users, and append-only audit events; migrations live under `services/incident-api/migrations/`. The back office uses `X-Backoffice-User` and defaults to the local `local-user` identity.
+The API is mounted from `services/incident-api/app/main.py` and exposes health, catalogs, incidents, and summary routers. SQLite stores incidents, users, and append-only audit events; migrations live under `services/incident-api/migrations/`. The incident manager uses `X-Backoffice-User` and defaults to the local `local-user` identity.
+
+## Frontend framework standard
+
+Every new standalone React frontend application under `uis/` must use Next.js
+App Router and TypeScript. The incident manager and inventory manager are
+existing Vite applications and remain exceptions; do not choose Vite for a new
+application.
 
 ## Expected technology direction
 
@@ -117,8 +132,9 @@ The project supports a modern AI engineering architecture with a combination of:
 
 - Python backend services (FastAPI expected)
 - TypeScript React frontends and shared contracts/packages
-- Vite for the operational back office and Next.js for the public website
-- React Router for back-office client-side navigation and Next.js App Router for the public site
+- Next.js App Router for new standalone frontend applications
+- Existing Vite applications: the incident manager and inventory manager
+- React Router remains in the existing incident manager; new apps use Next.js App Router
 - Zustand for local UI state
 - TanStack Query for server state and API cache management
 - LLM-based AI agents and skills
