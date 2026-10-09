@@ -21,6 +21,7 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
   - `src/pages/`: queue, form, and detail views.
   - `src/hooks/`: catalog, incident, mutation, and summary queries.
   - `src/store/`: Zustand UI state.
+- `uis/website/`: Next.js 16 public company website using the App Router, React 19, and TypeScript. The homepage is statically rendered.
 - `packages/shared/`: TypeScript incident and catalog contracts with a typecheck test.
 - `docs/`: approved catalog documentation and layer guidance.
 - `memory-bank/`: product context, implementation decisions, technology notes, visual design, and project state.
@@ -44,6 +45,7 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
 - API: from `services/incident-api`, create a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
 - API tests: `PYTHONPATH=. pytest` from `services/incident-api`, or `.venv/bin/pytest services/incident-api/tests/test_contracts.py -q` from the repository root.
 - Back office: from `uis/backoffice`, run `npm install`, `npm run typecheck`, `npm run build`, and `npm run dev`.
+- Public website: from `uis/website`, run `npm install`, `npm run dev`, `npm run typecheck`, `npm run build`, and `npm run start`.
 - The UI expects the API at the local Vite development setup and sends `X-Backoffice-User: local-user` by default.
 
 ## Remaining gaps

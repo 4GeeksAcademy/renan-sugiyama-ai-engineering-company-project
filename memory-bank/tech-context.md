@@ -54,6 +54,14 @@ npm run typecheck
 npm run build
 ```
 
+### Frontend: public website
+
+The public company website lives under `uis/website` and uses Next.js 16 with
+the App Router, React 19, and TypeScript. The homepage is statically rendered;
+its shared sections and styles live under `src/components`, `src/site`, and
+`src/styles.css`. Its local commands are `npm run dev`, `npm run typecheck`,
+`npm run build`, and `npm run start` from `uis/website`.
+
 ### Intended runtime model
 
 The repository uses a centralized FastAPI backend under `services/incident-api`, with `app.main:app` as the local entry point. A root workspace runner and production deployment model are still not defined.
@@ -109,8 +117,8 @@ The project supports a modern AI engineering architecture with a combination of:
 
 - Python backend services (FastAPI expected)
 - TypeScript React frontends and shared contracts/packages
-- Vite-based frontend tooling
-- React Router for client-side navigation
+- Vite for the operational back office and Next.js for the public website
+- React Router for back-office client-side navigation and Next.js App Router for the public site
 - Zustand for local UI state
 - TanStack Query for server state and API cache management
 - LLM-based AI agents and skills
