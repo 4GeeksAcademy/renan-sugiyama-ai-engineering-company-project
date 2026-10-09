@@ -15,16 +15,25 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
   - `app/routers/`: health, catalog, incident, and summary endpoints.
   - `migrations/`: initial schema and catalog-code repair migrations.
   - `tests/test_contracts.py`: API contract coverage.
-- `uis/backoffice/`: Vite React application for queue, creation, detail, editing, lifecycle actions, audit history, filters, and severity summary.
+- `uis/backoffice/incident-manager/`: existing Vite React application for queue, creation, detail, editing, lifecycle actions, audit history, filters, and severity summary.
   - `src/api/`: API client and TanStack Query setup.
   - `src/components/`: shell, forms, table, filters, dialogs, pills, and summary cards.
   - `src/pages/`: queue, form, and detail views.
   - `src/hooks/`: catalog, incident, mutation, and summary queries.
   - `src/store/`: Zustand UI state.
+- `uis/website/`: Next.js 16 public company website using the App Router, React 19, and TypeScript. The homepage is statically rendered.
+- `uis/backoffice/dashboard/`: Next.js 16 static operations dashboard using the App Router, React 19, and TypeScript; it is separate from the API-connected incident manager.
+- `uis/backoffice/inventory-manager/`: existing standalone Vite React application for inventory item management.
 - `packages/shared/`: TypeScript incident and catalog contracts with a typecheck test.
 - `docs/`: approved catalog documentation and layer guidance.
 - `memory-bank/`: product context, implementation decisions, technology notes, visual design, and project state.
 - `agents/`, `skills/`, `mcps/`, `workflows/`, `data/`, `infra/`, and `shared/`: broader AI engineering scaffolding and future extension areas.
+
+## Frontend framework standard
+
+New standalone React frontend applications must use Next.js App Router and
+TypeScript. The incident manager and inventory manager are existing Vite
+applications and remain exceptions.
 
 ## Implemented behavior
 
@@ -43,8 +52,11 @@ The repository is a monorepo for Nexova Solutions with a working incident-manage
 
 - API: from `services/incident-api`, create a virtual environment, install `requirements.txt`, then run `uvicorn app.main:app --reload`.
 - API tests: `PYTHONPATH=. pytest` from `services/incident-api`, or `.venv/bin/pytest services/incident-api/tests/test_contracts.py -q` from the repository root.
-- Back office: from `uis/backoffice`, run `npm install`, `npm run typecheck`, `npm run build`, and `npm run dev`.
-- The UI expects the API at the local Vite development setup and sends `X-Backoffice-User: local-user` by default.
+- Incident manager: from `uis/backoffice/incident-manager`, run `npm install`, `npm run typecheck`, `npm run build`, and `npm run dev`.
+- Inventory manager: from `uis/backoffice/inventory-manager`, run `npm install` and `npm run dev`.
+- Public website: from `uis/website`, run `npm install`, `npm run dev`, `npm run typecheck`, `npm run build`, and `npm run start`.
+- Operations dashboard: from `uis/backoffice/dashboard`, run `npm install`, `npm run dev`, `npm run typecheck`, `npm run build`, and `npm run start` (port `4173`).
+- The incident-manager UI expects the API at its local Vite development server and sends `X-Backoffice-User: local-user` by default.
 
 ## Remaining gaps
 

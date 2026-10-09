@@ -2,6 +2,13 @@
 
 This folder contains **all projects with a user interface** for the cross-functional AI Engineering company project — for example: a public website, admin dashboard frontend, ecommerce UI, customer portals, Streamlit/Gradio app or other frontend-only tools.
 
+## Frontend framework standard
+
+New standalone React frontend applications under `uis/` must use Next.js App
+Router and TypeScript. The incident manager and inventory manager are existing
+Vite applications and are exceptions to this standard; do not use Vite for new
+apps.
+
 The two main projects stored here are:
 
 - **`website`** — the company's public-facing web presence.
