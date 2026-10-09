@@ -1,0 +1,44 @@
+services:
+  interfaces:
+    build:
+      context: ./uis
+      dockerfile: Dockerfile
+    command: ["sh", "./start.sh"]
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - type: bind
+        source: ./uis
+        target: /app/uis
+      - website_node_modules:/app/uis/website/node_modules
+      - dashboard_node_modules:/app/uis/backoffice/dashboard/node_modules
+    environment:
+      DASHBOARD_API_URL: http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - nexova-network
+
+  backend:
+    build:
+      context: ./services
+      dockerfile: Dockerfile
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "8002:8000"
+    volumes:
+      - type: bind
+        source: ./services/dashboard-aggregator-api
+        target: /app
+    networks:
+      - nexova-network
+
+volumes:
+  website_node_modules:
+  dashboard_node_modules:
+
+networks:
+  nexova-network:
+    name: nexova-network
+    driver: bridge
