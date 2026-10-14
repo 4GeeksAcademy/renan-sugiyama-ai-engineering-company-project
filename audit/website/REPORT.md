@@ -5,3 +5,7 @@ Darkened the shared muted-text token to `#626b64` and primary orange to `#a94d24
 The lowest checked muted-text contrast is now 4.81:1 on the orange-tinted card background; white text on primary orange is 5.56:1. Both exceed WCAG AA's 4.5:1 requirement for normal text.
 
 Replaced the external Google Fonts stylesheet with `next/font/google` for DM Sans and Space Mono. Next.js now self-hosts the fonts, removing the browser's third-party font stylesheet request; `display: swap` remains enabled.
+
+## Unused JavaScript
+
+The homepage has no app-owned client components or third-party scripts; its client bundles are Next.js runtime modules. Keeping Next.js means these bytes cannot be safely removed with code splitting. Eliminating them requires a zero-JavaScript static delivery architecture, so no site-code change was made and the Lighthouse item remains unresolved.
