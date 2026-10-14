@@ -43,16 +43,16 @@ Hierarquia aproximada:
 
 ### Tokens principais
 
-| Token      | Valor                                | Uso                                                             |
+| Token      | Valor canonico                       | Uso                                                             |
 | ---------- | ------------------------------------ | --------------------------------------------------------------- |
 | `--ink`    | `#17211b`                            | Texto principal, titulos e fundo de toast.                      |
-| `--muted`  | `#6e776f`                            | Texto secundario, labels e metadados.                           |
+| `--muted`  | `#626b64`                            | Texto secundario, labels e metadados.                           |
 | `--line`   | `#dfe5df`                            | Bordas e divisores.                                             |
 | `--paper`  | `#f5f7f3`                            | Fundo geral da aplicacao.                                       |
 | `--white`  | `#ffffff`                            | Superficies de painel, cards e modais.                          |
 | `--green`  | `#155d45`                            | Navegacao lateral, identidade e acoes positivas.                |
 | `--mint`   | `#d9eee2`                            | Botoes secundarios e superficies de apoio.                      |
-| `--orange` | `#d86d36`                            | Acao principal, marcadores de auditoria e destaque de operacao. |
+| `--orange` | `#a94d24`                            | Acao principal, marcadores de auditoria e destaque de operacao. |
 | `--red`    | `#b8443f`                            | Erros, atrasos, criticidade e acoes destrutivas.                |
 | `--yellow` | `#c58b24`                            | Reserva para estados de atencao.                                |
 | `--shadow` | `0 18px 50px rgba(31, 49, 38, 0.08)` | Elevacao suave de cards e paineis.                              |
@@ -172,3 +172,7 @@ SLA:
 - Manter radius entre `4px` e `8px`; evitar cards dentro de cards.
 - Toda nova acao de status deve continuar visivel, agrupada e semanticamente colorida.
 - Preservar contraste, foco visivel e leitura em telas pequenas.
+
+## Contraste
+
+Manter contraste WCAG AA de pelo menos `4.5:1` para texto normal. Os tokens canonicos foram verificados no site em fundos neutros e tintados: o menor contraste de `--muted` e `4.81:1`, e texto branco sobre `--orange` e `5.56:1`.
