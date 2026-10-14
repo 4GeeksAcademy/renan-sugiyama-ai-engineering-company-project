@@ -30,7 +30,7 @@
   background: var(--green);
   color: var(--white);
   font-weight: 700;
-  font-family: "Space Mono", monospace;
+  font-family: var(--font-space-mono), monospace;
 }
 
 .brandName,

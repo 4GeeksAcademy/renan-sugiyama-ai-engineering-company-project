@@ -94,7 +94,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: "Space Mono", monospace;
+  font-family: var(--font-space-mono), monospace;
 }
 
 .metricValue {
@@ -134,7 +134,7 @@
 .miniLabel {
   display: block;
   margin-bottom: 10px;
-  font-family: "Space Mono", monospace;
+  font-family: var(--font-space-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;

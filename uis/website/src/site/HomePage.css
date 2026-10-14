@@ -39,7 +39,7 @@
   border-radius: 999px;
   background: rgba(21, 93, 69, 0.08);
   color: var(--green);
-  font-family: "Space Mono", monospace;
+  font-family: var(--font-space-mono), monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
