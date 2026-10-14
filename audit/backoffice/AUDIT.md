@@ -11,7 +11,7 @@ Run against `http://localhost:3001/` on October 14, 2026, using Lighthouse 13.4.
 
 ## Main Problems to Solve
 
-- **Improve text contrast.** Lighthouse reports foreground/background color combinations with insufficient contrast. Identify the affected controls and text, correct the colors, and verify them against WCAG contrast requirements.
+- **Improve text contrast (code fix applied).** Updated the dashboard text colors to pass WCAG AA contrast checks; re-run Lighthouse to verify the reported audit is cleared.
 - **Reduce render-blocking requests.** Lighthouse estimates a potential 240 ms saving. Inspect the listed requests and defer or optimize resources not required for the initial render.
 - **Reduce unused JavaScript.** Lighthouse estimates 205 KiB could be removed. Inspect the shipped bundles and avoid loading code not needed for the current page or workflow.
 - **Reduce legacy JavaScript.** Lighthouse estimates 13 KiB of savings. Review browser targets and dependencies to limit unnecessary compatibility code.
