@@ -66,6 +66,12 @@ class InventoryItemListResponse(BaseModel):
     items: list[InventoryItemResponse]
 
 
+class InventoryItemReference(BaseModel):
+    id: str
+    name: str
+    unit: InventoryUnit
+
+
 class InventoryMovementCreate(BaseModel):
     item_id: str = Field(min_length=1)
     type: InventoryMovementType
@@ -93,7 +99,7 @@ class InventoryMovementCreate(BaseModel):
 
 class InventoryMovementResponse(BaseModel):
     id: str
-    item_id: str
+    item: InventoryItemReference
     type: InventoryMovementType
     quantity: float
     reason: str
@@ -118,7 +124,7 @@ class InventoryMovementCorrectionCreate(BaseModel):
 class InventoryMovementCorrectedEvent(BaseModel):
     id: str
     event_type: Literal["InventoryMovementCorrected"] = "InventoryMovementCorrected"
-    original_movement_id: str
+    original_movement: InventoryMovementResponse
     compensating_movement: InventoryMovementResponse
     occurred_at: datetime
 

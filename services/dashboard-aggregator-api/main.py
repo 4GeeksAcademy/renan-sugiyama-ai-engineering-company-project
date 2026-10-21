@@ -1,5 +1,34 @@
+from typing import Literal
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+
+class HealthResponse(BaseModel):
+    status: Literal["ok"]
+
+
+class DashboardMetric(BaseModel):
+    label: str
+    value: str
+    delta: str
+    tone: Literal["warning", "critical"]
+
+
+class DashboardPanel(BaseModel):
+    title: str
+    badge: str
+    badge_class: Literal["critical", "warning", "positive"] = Field(alias="badgeClass")
+    metric_label: str = Field(alias="metricLabel")
+    metric_value: str = Field(alias="metricValue")
+    progress: int = Field(ge=0, le=100)
+    alerts: list[str]
+
+
+class DashboardResponse(BaseModel):
+    metrics: list[DashboardMetric]
+    panels: list[DashboardPanel]
 
 app = FastAPI(title="Nexova Dashboard Aggregator API", version="0.1.0")
 app.add_middleware(
@@ -92,11 +121,11 @@ DASHBOARD = {
 }
 
 
-@app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
+@app.get("/health", response_model=HealthResponse)
+def health() -> HealthResponse:
+    return HealthResponse(status="ok")
 
 
-@app.get("/dashboard")
-def dashboard() -> dict:
-    return DASHBOARD
+@app.get("/dashboard", response_model=DashboardResponse)
+def dashboard() -> DashboardResponse:
+    return DashboardResponse.model_validate(DASHBOARD)

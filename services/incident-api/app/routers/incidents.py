@@ -95,7 +95,6 @@ def list_incidents(
     return IncidentListResponse(
         items=[row_to_incident(row) for row in rows],
         page=page,
-        page_size=page_size,
         total_items=total,
         total_pages=(total + page_size - 1) // page_size,
     )

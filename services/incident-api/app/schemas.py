@@ -43,6 +43,18 @@ class BackofficeUser(BaseModel):
     role: Literal["backoffice"]
 
 
+class HealthResponse(BaseModel):
+    status: Literal["ok"]
+
+
+class IncidentCatalogsResponse(BaseModel):
+    channels: list[Channel]
+    types: list[IncidentType]
+    severities: list[Severity]
+    statuses: list[IncidentStatus]
+    responsible_areas: list[ResponsibleArea]
+
+
 class IncidentResponse(BaseModel):
     id: str
     title: str
@@ -54,25 +66,18 @@ class IncidentResponse(BaseModel):
     status: IncidentStatus
     reporter: str
     client_account: str | None
-    created_at: str
     updated_at: str
     sla_target_at: str | None
-    resolved_at: str | None
-    closed_at: str | None
-    created_by: str
-    updated_by: str
 
 
 class AuditEventResponse(BaseModel):
     id: str
-    incident_id: str
     event_type: Literal["status_changed", "responsible_area_changed"]
     actor_id: str
     occurred_at: str
     previous_value: str
     new_value: str
     reason: str | None
-    correlation_id: str
 
 
 class IncidentDetailResponse(BaseModel):
@@ -83,13 +88,12 @@ class IncidentDetailResponse(BaseModel):
 class IncidentListResponse(BaseModel):
     items: list[IncidentResponse]
     page: int
-    page_size: int
     total_items: int
     total_pages: int
 
 
 class SummaryResponse(BaseModel):
-    open_incident_counts_by_severity: dict[str, int]
+    open_incident_counts_by_severity: dict[Severity, int]
     open_backlog_count: int
     overdue_open_incident_count: int
     sla_hours: int

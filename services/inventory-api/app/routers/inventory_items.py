@@ -126,7 +126,7 @@ def update_item(item_id: str, payload: InventoryItemUpdate) -> InventoryItemResp
     return row_to_inventory_item(row)
 
 
-@router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{item_id}", response_model=None, status_code=status.HTTP_204_NO_CONTENT)
 def remove_item(item_id: str) -> None:
     with closing(connect()) as connection:
         cursor = connection.execute(

@@ -18,7 +18,7 @@ export type Incident = {
   responsible_area: string;
   status: string;
   reporter: string;
-  client_account?: string;
+  client_account?: string | null;
   sla_target_at: string | null;
   updated_at: string;
 };
@@ -35,7 +35,7 @@ export type AuditEvent = {
   new_value: string;
   occurred_at: string;
   actor_id: string;
-  reason?: string;
+  reason?: string | null;
 };
 
 export type IncidentDetailResponse = {

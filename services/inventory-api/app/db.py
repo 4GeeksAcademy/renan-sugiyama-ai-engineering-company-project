@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app.constants import DATABASE_PATH
-from app.schemas import InventoryItemResponse, InventoryMovementResponse
+from app.schemas import InventoryItemResponse, InventoryMovementResponse, InventoryItemReference
 
 MOVEMENT_STOCK_DELTA_SQL = """
 CASE
@@ -68,5 +68,15 @@ def row_to_inventory_item(row: sqlite3.Row) -> InventoryItemResponse:
     return InventoryItemResponse(**item)
 
 
-def row_to_inventory_movement(row: sqlite3.Row) -> InventoryMovementResponse:
-    return InventoryMovementResponse(**dict(row))
+def row_to_inventory_movement(
+    row: sqlite3.Row,
+    item: sqlite3.Row,
+) -> InventoryMovementResponse:
+    movement = dict(row)
+    movement.pop("item_id")
+    movement["item"] = InventoryItemReference(
+        id=item["id"],
+        name=item["name"],
+        unit=item["unit"],
+    )
+    return InventoryMovementResponse(**movement)
