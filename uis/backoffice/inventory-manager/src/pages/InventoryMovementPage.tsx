@@ -52,7 +52,7 @@ export function InventoryMovementPage() {
     onSuccess: async (movement) => {
       await queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
       await queryClient.invalidateQueries({
-        queryKey: ["inventory-item", movement.item_id],
+        queryKey: ["inventory-item", movement.item.id],
       });
       setQuantity("");
       setReason("");

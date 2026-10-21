@@ -37,9 +37,14 @@ export type InventoryMovementType =
   | "outgoing_stock"
   | "stock_adjustment";
 
+export type InventoryItemReference = Pick<
+  InventoryItem,
+  "id" | "name" | "unit"
+>;
+
 export type InventoryMovement = {
   id: string;
-  item_id: string;
+  item: InventoryItemReference;
   type: InventoryMovementType;
   quantity: number;
   reason: string;

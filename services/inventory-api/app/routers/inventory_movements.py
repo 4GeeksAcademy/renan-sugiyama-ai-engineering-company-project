@@ -61,7 +61,7 @@ def register_movement(payload: InventoryMovementCreate) -> InventoryMovementResp
         try:
             connection.execute("BEGIN IMMEDIATE")
             item = connection.execute(
-                "SELECT unit FROM inventory_items WHERE id = ? AND active = 1",
+                "SELECT id, name, unit FROM inventory_items WHERE id = ? AND active = 1",
                 (payload.item_id,),
             ).fetchone()
             if item is None:
@@ -131,7 +131,7 @@ def register_movement(payload: InventoryMovementCreate) -> InventoryMovementResp
                 detail="Movement could not be persisted",
             ) from error
 
-    return row_to_inventory_movement(row)
+    return row_to_inventory_movement(row, item)
 
 
 @router.post(
@@ -155,6 +155,16 @@ def correct_movement(
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
                     detail="Inventory movement not found",
+                )
+            item = connection.execute(
+                "SELECT id, name, unit FROM inventory_items WHERE id = ?",
+                (original["item_id"],),
+            ).fetchone()
+            if item is None:
+                connection.rollback()
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Inventory item not found",
                 )
 
             already_corrected = connection.execute(
@@ -231,7 +241,7 @@ def correct_movement(
 
     return InventoryMovementCorrectedEvent(
         id=event_id,
-        original_movement_id=movement_id,
-        compensating_movement=row_to_inventory_movement(compensating_row),
+        original_movement=row_to_inventory_movement(original, item),
+        compensating_movement=row_to_inventory_movement(compensating_row, item),
         occurred_at=occurred_at,
     )
