@@ -1,0 +1,3 @@
+import os
+
+TELEMETRY_ENDPOINT = os.getenv("TELEMETRY_ENDPOINT")
