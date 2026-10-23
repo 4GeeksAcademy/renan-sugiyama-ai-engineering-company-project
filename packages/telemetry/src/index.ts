@@ -1,4 +1,12 @@
+import { getTelemetryContext, TELEMETRY_SCHEMA_VERSION } from "./context";
+
 type TelemetryEvent = {
+  eventId: string;
+  sessionId: string;
+  userId: string;
+  timestamp: string;
+  schemaVersion: typeof TELEMETRY_SCHEMA_VERSION;
+  requestId: string;
   event_type: string;
   properties: Record<string, unknown>;
 };
@@ -17,7 +25,21 @@ export function track(
   eventType: string,
   properties: Record<string, unknown>,
 ): void {
-  enqueueEvent({ event_type: eventType, properties });
+  if (!TELEMETRY_ENDPOINT || typeof window === "undefined") return;
+
+  const context = getTelemetryContext();
+  if (!context) return;
+
+  enqueueEvent({
+    eventId: crypto.randomUUID(),
+    sessionId: context.sessionId,
+    userId: context.userId,
+    timestamp: new Date().toISOString(),
+    schemaVersion: TELEMETRY_SCHEMA_VERSION,
+    requestId: context.requestId,
+    event_type: eventType,
+    properties,
+  });
 }
 
 function enqueueEvent(event: TelemetryEvent): void {
