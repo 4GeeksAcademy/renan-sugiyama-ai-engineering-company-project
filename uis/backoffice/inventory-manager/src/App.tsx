@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import {
   NavLink,
   Route,
@@ -6,12 +7,23 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  InventoryItemDetailPage,
-  InventoryItemFormPage,
-  InventoryItemsPage,
-} from "./pages/InventoryItemsPage";
-import { InventoryMovementPage } from "./pages/InventoryMovementPage";
+import { InventoryItemsPage } from "./pages/InventoryItemsPage";
+
+const InventoryItemDetailPage = lazy(() =>
+  import("./pages/InventoryItemDetailPage").then((module) => ({
+    default: module.InventoryItemDetailPage,
+  })),
+);
+const InventoryItemFormPage = lazy(() =>
+  import("./pages/InventoryItemFormPage").then((module) => ({
+    default: module.InventoryItemFormPage,
+  })),
+);
+const InventoryMovementPage = lazy(() =>
+  import("./pages/InventoryMovementPage").then((module) => ({
+    default: module.InventoryMovementPage,
+  })),
+);
 
 export function App() {
   const location = useLocation();
@@ -75,23 +87,29 @@ export function App() {
             </button>
           )}
         </header>
-        <Routes>
-          <Route path="/" element={<InventoryItemsPage />} />
-          <Route path="/new" element={<InventoryItemFormPage />} />
-          <Route path="/inventory" element={<InventoryItemsPage />} />
-          <Route path="/inventory/new" element={<InventoryItemFormPage />} />
-          <Route
-            path="/inventory/:itemId/edit"
-            element={<InventoryItemFormPage />}
-          />
-          <Route
-            path="/inventory/:itemId"
-            element={<InventoryItemDetailPage />}
-          />
-          <Route path="/movements/new" element={<InventoryMovementPage />} />
-          <Route path="/:itemId/edit" element={<InventoryItemFormPage />} />
-          <Route path="/:itemId" element={<InventoryItemDetailPage />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="loading-state">Loading inventory workspace...</div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<InventoryItemsPage />} />
+            <Route path="/new" element={<InventoryItemFormPage />} />
+            <Route path="/inventory" element={<InventoryItemsPage />} />
+            <Route path="/inventory/new" element={<InventoryItemFormPage />} />
+            <Route
+              path="/inventory/:itemId/edit"
+              element={<InventoryItemFormPage />}
+            />
+            <Route
+              path="/inventory/:itemId"
+              element={<InventoryItemDetailPage />}
+            />
+            <Route path="/movements/new" element={<InventoryMovementPage />} />
+            <Route path="/:itemId/edit" element={<InventoryItemFormPage />} />
+            <Route path="/:itemId" element={<InventoryItemDetailPage />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );
