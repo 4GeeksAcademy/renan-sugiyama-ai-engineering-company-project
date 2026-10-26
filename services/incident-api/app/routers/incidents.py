@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
+from app.cache import clear_incident_caches, incident_list_cache
 from app.constants import SLA_HOURS, TRANSITIONS, ResponsibleArea, Severity, IncidentStatus
 from app.db import audit_rows, connect, row_to_incident, utc_now
 from app.dependencies import current_user
@@ -56,6 +57,7 @@ def create_incident(
             tuple(values.values()),
         )
         connection.commit()
+        clear_incident_caches()
         row = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
     return row_to_incident(row)
 
@@ -73,6 +75,20 @@ def list_incidents(
     sort_direction: Literal["asc", "desc"] = "desc",
 ) -> IncidentListResponse:
     del user
+    cache_key = (
+        page,
+        page_size,
+        search,
+        status_filter,
+        severity,
+        responsible_area,
+        sort_by,
+        sort_direction,
+    )
+    cached_response = incident_list_cache.get(cache_key)
+    if cached_response is not None:
+        return cached_response
+
     clauses: list[str] = []
     parameters: list[str] = []
     if search:
@@ -92,12 +108,14 @@ def list_incidents(
             f"SELECT * FROM incidents{where} ORDER BY {sort_by} {order} LIMIT ? OFFSET ?",
             [*parameters, page_size, offset],
         ).fetchall()
-    return IncidentListResponse(
+    result = IncidentListResponse(
         items=[row_to_incident(row) for row in rows],
         page=page,
         total_items=total,
         total_pages=(total + page_size - 1) // page_size,
     )
+    incident_list_cache.set(cache_key, result)
+    return result
 
 
 @router.get("/incidents/{incident_id}", response_model=IncidentDetailResponse)
@@ -139,6 +157,7 @@ def update_incident(
             [*updates.values(), incident_id],
         )
         connection.commit()
+        clear_incident_caches()
         row = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
     return row_to_incident(row)
 
@@ -168,6 +187,7 @@ def assign_incident(
              row["responsible_area"], payload.responsible_area, payload.reason, correlation_id),
         )
         connection.commit()
+        clear_incident_caches()
         updated = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
     return row_to_incident(updated)
 
@@ -202,6 +222,7 @@ def change_status(
              row["status"], payload.status, payload.reason, correlation_id),
         )
         connection.commit()
+        clear_incident_caches()
         updated = connection.execute("SELECT * FROM incidents WHERE id = ?", (incident_id,)).fetchone()
     return row_to_incident(updated)
 

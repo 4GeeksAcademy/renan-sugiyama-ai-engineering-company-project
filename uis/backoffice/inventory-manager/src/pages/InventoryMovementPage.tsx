@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -40,8 +40,10 @@ export function InventoryMovementPage() {
     queryKey: ["inventory-items"],
     queryFn: () => inventoryApi<InventoryItemList>("/inventory/items"),
   });
-  const selectedItem = itemsQuery.data?.items.find(
-    (item) => item.id === itemId,
+  const inventoryItems = itemsQuery.data?.items;
+  const selectedItem = useMemo(
+    () => inventoryItems?.find((item) => item.id === itemId),
+    [inventoryItems, itemId],
   );
   const mutation = useMutation<
     InventoryMovement,

@@ -5,6 +5,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.cache import incident_summary_cache
 from app.constants import SLA_HOURS, SEVERITIES
 from app.dependencies import current_user
 from app.schemas import BackofficeUser, SummaryResponse
@@ -16,6 +17,10 @@ router = APIRouter()
 
 @router.get("/summary", response_model=SummaryResponse)
 def summary(_: Annotated[BackofficeUser, Depends(current_user)]) -> SummaryResponse:
+    cached_response = incident_summary_cache.get("summary")
+    if cached_response is not None:
+        return cached_response
+
     counts = {severity: 0 for severity in SEVERITIES}
     now = datetime.now(timezone.utc).isoformat()
     with closing(connect()) as connection:
@@ -49,7 +54,7 @@ def summary(_: Annotated[BackofficeUser, Depends(current_user)]) -> SummaryRespo
         if resolved_count
         else None
     )
-    return SummaryResponse(
+    result = SummaryResponse(
         open_incident_counts_by_severity=counts,
         open_backlog_count=metrics["open_backlog_count"] or 0,
         overdue_open_incident_count=metrics["overdue_open_incident_count"] or 0,
@@ -61,3 +66,5 @@ def summary(_: Annotated[BackofficeUser, Depends(current_user)]) -> SummaryRespo
         ),
         resolved_within_sla_percent=resolved_within_sla_percent,
     )
+    incident_summary_cache.set("summary", result)
+    return result
