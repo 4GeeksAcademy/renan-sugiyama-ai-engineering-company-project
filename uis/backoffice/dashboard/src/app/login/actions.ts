@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { authRequest, SESSION_COOKIE, type AuthSession } from "../../lib/auth";
 
-export type AuthFormState = { error: string };
+export type AuthFormState = { error: string; deniedStatus?: 401 };
 
 export async function login(
   _previousState: AuthFormState,
@@ -30,7 +30,7 @@ export async function login(
       body: JSON.stringify({ username: username.trim(), password }),
     });
     if (response.status === 401) {
-      return { error: "Invalid username or password." };
+      return { error: "Invalid username or password.", deniedStatus: 401 };
     }
     if (!response.ok) {
       return { error: "Sign-in is unavailable. Please try again later." };

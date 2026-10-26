@@ -9,6 +9,10 @@ import {
   type InventoryMovementCreate,
   type InventoryMovementType,
 } from "../api/inventoryClient";
+import {
+  trackMovementRecorded,
+  trackMovementRejected,
+} from "../api/movementTelemetry";
 
 const movementTypes: { value: InventoryMovementType; label: string }[] = [
   { value: "incoming_stock", label: "Incoming stock" },
@@ -49,7 +53,8 @@ export function InventoryMovementPage() {
         method: "POST",
         body: JSON.stringify(payload),
       }),
-    onSuccess: async (movement) => {
+    onSuccess: async (movement, payload) => {
+      if (selectedItem) trackMovementRecorded(selectedItem, payload, movement);
       await queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
       await queryClient.invalidateQueries({
         queryKey: ["inventory-item", movement.item.id],
@@ -58,6 +63,8 @@ export function InventoryMovementPage() {
       setReason("");
       setRecordedAt(localDateTimeValue());
     },
+    onError: (error, payload) =>
+      trackMovementRejected(selectedItem, payload, error),
   });
 
   const fieldErrors =

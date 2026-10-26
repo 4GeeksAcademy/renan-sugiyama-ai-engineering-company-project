@@ -1,10 +1,29 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { track } from "@nexova/telemetry";
+import { setTelemetryContext } from "@nexova/telemetry/context";
 import { login, logout } from "../app/login/actions";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(login, { error: "" });
+
+  useEffect(() => {
+    if (state.deniedStatus !== 401) return;
+    // No session exists before login; use an anonymous identity and a system session.
+    setTelemetryContext({
+      userId: "anonymous",
+      sessionId: crypto.randomUUID(),
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      requestId: crypto.randomUUID(),
+    });
+    track("user_authentication_denied", {
+      reason: "unknown_user",
+      route: "/login",
+      httpStatus: 401,
+    });
+    setTelemetryContext(null);
+  }, [state]);
 
   return (
     <form action={formAction} className="loginForm">

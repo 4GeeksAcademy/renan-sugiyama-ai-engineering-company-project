@@ -1,3 +1,9 @@
+import { track } from "@nexova/telemetry";
+import {
+  getTelemetryContext,
+  setTelemetryContext,
+} from "@nexova/telemetry/context";
+
 const API_BASE = window.INVENTORY_API_URL || "http://localhost:8001";
 const USER_ID = window.INVENTORY_USER_ID || "local-user";
 
@@ -90,6 +96,57 @@ function formatErrorDetail(detail: unknown): string {
   return "The inventory request could not be completed.";
 }
 
+function routeTemplate(path: string): string {
+  return path
+    .split("?")[0]
+    .replace(
+      /^(\/inventory\/items)\/(?!below-reorder-point$)[^/]+/,
+      "$1/{item_id}",
+    )
+    .replace(/^(\/inventory\/movements)\/[^/]+/, "$1/{movement_id}");
+}
+
+const ERROR_CODES: Record<number, string> = {
+  400: "bad_request",
+  401: "unauthorized",
+  403: "forbidden",
+  404: "not_found",
+  409: "conflict",
+  422: "validation_error",
+};
+
+function trackResponse(
+  path: string,
+  method: string,
+  status: number,
+  durationMs: number,
+): void {
+  const route = routeTemplate(path);
+  track("api_latency_recorded", {
+    routeTemplate: route,
+    method,
+    httpStatus: status,
+    durationMs: Math.round(durationMs),
+  });
+  if (status < 400) return;
+
+  track("api_request_failed", {
+    routeTemplate: route,
+    method,
+    httpStatus: status,
+    errorCode:
+      ERROR_CODES[status] ?? (status >= 500 ? "server_error" : "client_error"),
+    retryable: status >= 500 || status === 429,
+  });
+  if (status === 401 || status === 403) {
+    track("user_authentication_denied", {
+      reason: status === 401 ? "missing_identity" : "unknown_user",
+      route,
+      httpStatus: status,
+    });
+  }
+}
+
 export async function inventoryApi<T>(
   path: string,
   options: RequestInit = {},
@@ -98,7 +155,18 @@ export async function inventoryApi<T>(
   headers.set("Content-Type", "application/json");
   headers.set("X-Inventory-User", USER_ID);
 
+  const context = getTelemetryContext();
+  if (context) {
+    setTelemetryContext({ ...context, requestId: crypto.randomUUID() });
+  }
+  const startedAt = performance.now();
   const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  trackResponse(
+    path,
+    (options.method || "GET").toUpperCase(),
+    response.status,
+    performance.now() - startedAt,
+  );
   const result = await response.json().catch(() => null);
   if (!response.ok) {
     const detail = (result as { detail?: unknown } | null)?.detail;
