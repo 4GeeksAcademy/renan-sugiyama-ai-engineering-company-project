@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@nexova/telemetry": "file:../../../packages/telemetry",
     "next": "^16.4.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

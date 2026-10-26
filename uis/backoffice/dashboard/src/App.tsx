@@ -1,3 +1,5 @@
+import { LogoutForm } from "./components/AuthForms";
+
 type Metric = {
   label: string;
   value: string;
@@ -56,6 +58,7 @@ function App({ data, error }: AppProps) {
             <small>{error ? "Unavailable" : "Needs attention"}</small>
           </div>
         </div>
+        <LogoutForm />
       </aside>
 
       <main className="main">

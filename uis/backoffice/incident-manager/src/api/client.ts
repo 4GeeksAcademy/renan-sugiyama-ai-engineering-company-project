@@ -1,4 +1,4 @@
-const API_BASE = window.INCIDENT_API_URL || "http://localhost:8000";
+const API_BASE = window.INCIDENT_API_URL || "http://localhost:8004";
 const USER_ID = window.INCIDENT_USER_ID || "local-user";
 
 export async function api(
