@@ -10,13 +10,13 @@ def insert_telemetry_rows(pool: ConnectionPool, rows: list[dict[str, Any]]) -> i
         return 0
 
     row_placeholders = sql.SQL("({})").format(
-        sql.SQL(", ").join(sql.Placeholder() for _ in range(5))
+        sql.SQL(", ").join(sql.Placeholder() for _ in range(7))
     )
     values_clause = sql.SQL(", ").join(row_placeholders for _ in rows)
     statement = sql.SQL(
         """
         INSERT INTO public.telemetry_events
-            (event_type, timestamp, service, tags, level)
+            (event_type, timestamp, service, tags, level, value, message)
         VALUES {}
         ON CONFLICT ((tags ->> 'event_id')) DO NOTHING
         RETURNING tags ->> 'event_id'
@@ -32,6 +32,8 @@ def insert_telemetry_rows(pool: ConnectionPool, rows: list[dict[str, Any]]) -> i
                 row["service"],
                 Jsonb(row["tags"]),
                 row["level"],
+                row["value"],
+                row["message"],
             )
         )
 

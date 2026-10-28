@@ -68,7 +68,7 @@
     },
     "schemaVersion": {
       "type": "string",
-      "const": "1.0.0",
+      "const": "2.0.0",
       "description": "Envelope/catalog version. Increment when the contract changes incompatibly."
     },
     "requestId": {
@@ -116,6 +116,7 @@
       "additionalProperties": false,
       "required": ["visitId", "landingPath", "trafficSource", "medium", "campaignId"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "visitId": {"type": "string", "minLength": 1, "description": "Opaque visit identifier."},
         "landingPath": {"type": "string", "pattern": "^/", "description": "Normalized path without query string or fragment."},
         "trafficSource": {"type": "string", "enum": ["direct", "organic_search", "paid_search", "referral", "social", "email", "other"], "description": "Controlled traffic source."},
@@ -131,6 +132,7 @@
       "additionalProperties": false,
       "required": ["conversionId", "conversionType", "attributionVisitId", "trafficSource", "medium", "campaignId"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "conversionId": {"type": "string", "minLength": 1, "description": "Opaque conversion ID."},
         "conversionType": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered conversion type."},
         "attributionVisitId": {"type": "string", "minLength": 1, "description": "Opaque attributed visit ID."},
@@ -147,6 +149,7 @@
       "additionalProperties": false,
       "required": ["windowStart", "windowEnd", "eligibleRepCount", "updatedRepCount", "updateRate"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "windowStart": {"type": "string", "format": "date-time", "description": "Start of measurement window."},
         "windowEnd": {"type": "string", "format": "date-time", "description": "End of measurement window."},
         "eligibleRepCount": {"type": "integer", "minimum": 0, "description": "Number of eligible representatives."},
@@ -162,6 +165,7 @@
       "additionalProperties": false,
       "required": ["employeeId", "department", "effectiveDate", "separationType"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "employeeId": {"type": "string", "minLength": 1, "description": "Keyed pseudonymous employee ID."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "effectiveDate": {"type": "string", "format": "date", "description": "Departure effective date."},
@@ -176,6 +180,7 @@
       "additionalProperties": false,
       "required": ["department", "snapshotAt", "activeEmployeeCount", "scheduledWorkHours", "windowStart", "windowEnd"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "snapshotAt": {"type": "string", "format": "date-time", "description": "Snapshot time."},
         "activeEmployeeCount": {"type": "integer", "minimum": 0, "description": "Aggregate active headcount."},
@@ -192,6 +197,7 @@
       "additionalProperties": false,
       "required": ["absenceId", "employeeId", "department", "absenceDate", "absenceHours", "absenceCategory"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "absenceId": {"type": "string", "minLength": 1, "description": "Opaque absence record ID."},
         "employeeId": {"type": "string", "minLength": 1, "description": "Keyed pseudonymous employee ID."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
@@ -208,6 +214,7 @@
       "additionalProperties": false,
       "required": ["requisitionId", "department", "roleFamily", "openedAt"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "requisitionId": {"type": "string", "minLength": 1, "description": "Opaque requisition ID."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "roleFamily": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered role-family code."},
@@ -222,6 +229,7 @@
       "additionalProperties": false,
       "required": ["requisitionId", "department", "openedAt", "filledAt", "elapsedCalendarDays"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "requisitionId": {"type": "string", "minLength": 1, "description": "Opaque requisition ID."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "openedAt": {"type": "string", "format": "date-time", "description": "Requisition opening time."},
@@ -237,6 +245,7 @@
       "additionalProperties": false,
       "required": ["ticketId", "clientId", "channel", "openedAt", "resolvedAt", "resolutionSeconds", "slaTargetSeconds", "slaMet"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
         "clientId": {"type": "string", "minLength": 1, "description": "Pseudonymous client ID."},
         "channel": {"type": "string", "enum": ["phone", "email", "chat", "other"], "description": "Support channel."},
@@ -255,6 +264,7 @@
       "additionalProperties": false,
       "required": ["queueId", "openTicketCount", "overdueTicketCount", "unassignedTicketCount", "activeAgentCount", "oldestOpenAgeSeconds"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "queueId": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered queue code."},
         "openTicketCount": {"type": "integer", "minimum": 0, "description": "Open tickets in the queue."},
         "overdueTicketCount": {"type": "integer", "minimum": 0, "description": "Open tickets past SLA."},
@@ -271,6 +281,7 @@
       "additionalProperties": false,
       "required": ["queryId", "eligibleForAutomation", "resolutionMethod", "humanHandoff", "resolved"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "queryId": {"type": "string", "minLength": 1, "description": "Pseudonymous query ID."},
         "eligibleForAutomation": {"type": "boolean", "description": "Whether the query belongs in the automation target denominator."},
         "resolutionMethod": {"type": "string", "enum": ["bot", "agent", "unresolved"], "description": "Final resolution path."},
@@ -286,6 +297,7 @@
       "additionalProperties": false,
       "required": ["ticketId", "clientId", "sentimentScore", "riskLevel", "modelVersion"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
         "clientId": {"type": "string", "minLength": 1, "description": "Pseudonymous client ID."},
         "sentimentScore": {"type": "number", "minimum": -1, "maximum": 1, "description": "Model sentiment score."},
@@ -301,6 +313,7 @@
       "additionalProperties": false,
       "required": ["ticketId", "escalationType", "escalationReasonCategory"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
         "escalationType": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered escalation type."},
         "escalationReasonCategory": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered escalation reason category, not free text."}
@@ -314,6 +327,7 @@
       "additionalProperties": false,
       "required": ["department", "metricName", "numericValue", "unit", "periodStart", "periodEnd"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "metricName": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered KPI name."},
         "numericValue": {"type": "number", "description": "Observed numeric KPI value."},
@@ -330,6 +344,7 @@
       "additionalProperties": false,
       "required": ["department", "metricName", "observedValue", "thresholdValue", "comparator", "severity", "dedupeKey"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
         "metricName": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered KPI name."},
         "observedValue": {"type": "number", "description": "Observed KPI value."},
@@ -345,8 +360,9 @@
       "x-sensitive-data": true,
       "x-sanitization": "Security-sensitive: never include credentials, auth headers, or attempted usernames; use a route template and anonymous envelope userId when identity is unknown.",
       "additionalProperties": false,
-      "required": ["reason", "route", "httpStatus"],
+      "required": ["reason", "route", "httpStatus", "message"],
       "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Authentication denied: missing identity.", "Authentication denied: unknown user.", "Authentication denied: inactive user."], "description": "Approved sanitized authentication summary."},
         "reason": {"type": "string", "enum": ["missing_identity", "unknown_user", "inactive_user"], "description": "Registered authentication rejection reason."},
         "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
         "httpStatus": {"type": "integer", "enum": [401, 403], "description": "HTTP response status."}
@@ -358,8 +374,10 @@
       "x-sensitive-data": true,
       "x-sanitization": "Do not emit rejected values or request bodies; use route templates and registered validation codes only.",
       "additionalProperties": false,
-      "required": ["route", "validationCode", "field", "httpStatus"],
+      "required": ["route", "validationCode", "field", "httpStatus", "message"],
       "properties": {
+        "value": {"type": ["number", "null"], "description": "Attempted movement quantity, when available."},
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Stock movement request was invalid.", "Stock movement item was not found.", "Stock movement conflicts with available stock.", "Stock movement contains an invalid field."], "description": "Approved sanitized validation summary."},
         "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
         "validationCode": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered validation error code."},
         "field": {"type": ["string", "null"], "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$", "description": "Allowlisted schema field name, or null."},
@@ -372,8 +390,9 @@
       "x-sensitive-data": true,
       "x-sanitization": "Do not emit attempted values; use opaque item IDs and route templates.",
       "additionalProperties": false,
-      "required": ["itemId", "attemptedField", "route", "httpStatus"],
+      "required": ["itemId", "attemptedField", "route", "httpStatus", "message"],
       "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Direct stock editing is not allowed."], "description": "Approved sanitized rejection summary."},
         "itemId": {"type": ["string", "null"], "description": "Opaque item ID, or null if not available."},
         "attemptedField": {"type": "string", "const": "current_stock", "description": "Field the request attempted to set."},
         "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
@@ -386,8 +405,10 @@
       "x-sensitive-data": true,
       "x-sanitization": "Inventory data: use opaque item IDs and supported units; exclude free-text movement reasons.",
       "additionalProperties": false,
-      "required": ["itemId", "availableStock", "requestedQuantity", "unit", "httpStatus"],
+      "required": ["itemId", "availableStock", "requestedQuantity", "unit", "httpStatus", "message"],
       "properties": {
+        "value": {"type": ["number", "null"], "description": "Requested outbound quantity."},
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Outbound stock movement exceeded available stock."], "description": "Approved sanitized stock summary."},
         "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
         "availableStock": {"type": "number", "minimum": 0, "description": "Current available stock before the attempt."},
         "requestedQuantity": {"type": "number", "exclusiveMinimum": 0, "description": "Requested outbound quantity."},
@@ -403,6 +424,8 @@
       "additionalProperties": false,
       "required": ["movementId", "itemId", "movementType", "quantity", "unit", "stockBefore", "stockAfter"],
       "properties": {
+        "value": {"type": ["number", "null"], "description": "Signed stock change for the recorded movement."},
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "movementId": {"type": "string", "minLength": 1, "description": "Opaque movement ID."},
         "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
         "movementType": {"type": "string", "enum": ["incoming_stock", "outgoing_stock", "stock_adjustment"], "description": "Registered movement type."},
@@ -420,6 +443,7 @@
       "additionalProperties": false,
       "required": ["itemId", "stockBefore", "stockAfter", "reorderPoint", "crossing"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
         "stockBefore": {"type": "number", "minimum": 0, "description": "Stock at or above threshold before the crossing."},
         "stockAfter": {"type": "number", "minimum": 0, "description": "Stock below threshold after the crossing."},
@@ -435,6 +459,7 @@
       "additionalProperties": false,
       "required": ["originalMovementId", "compensatingMovementId", "itemId", "correctionCategory"],
       "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "originalMovementId": {"type": "string", "minLength": 1, "description": "Opaque ID of corrected movement."},
         "compensatingMovementId": {"type": "string", "minLength": 1, "description": "Opaque ID of compensating movement."},
         "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
@@ -449,6 +474,8 @@
       "additionalProperties": false,
       "required": ["routeTemplate", "method", "httpStatus", "durationMs"],
       "properties": {
+        "value": {"type": ["number", "null"], "description": "Request duration in milliseconds."},
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
         "routeTemplate": {"type": "string", "pattern": "^/", "description": "Route template without IDs or query values."},
         "method": {"type": "string", "enum": ["GET", "POST", "PATCH", "DELETE"], "description": "HTTP method."},
         "httpStatus": {"type": "integer", "minimum": 100, "maximum": 599, "description": "HTTP response status."},
@@ -461,8 +488,9 @@
       "x-sensitive-data": true,
       "x-sanitization": "Emit registered error codes only; exclude stack traces, request bodies, query strings, route parameters, and raw exception messages.",
       "additionalProperties": false,
-      "required": ["routeTemplate", "method", "httpStatus", "errorCode", "retryable"],
+      "required": ["routeTemplate", "method", "httpStatus", "errorCode", "retryable", "message"],
       "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["API request failed: bad request.", "API request failed: authentication required.", "API request failed: access denied.", "API request failed: resource not found.", "API request failed: request conflict.", "API request failed: invalid request.", "API request failed: server error.", "API request failed: client error."], "description": "Approved sanitized API failure summary."},
         "routeTemplate": {"type": "string", "pattern": "^/", "description": "Route template without IDs or query values."},
         "method": {"type": "string", "enum": ["GET", "POST", "PATCH", "DELETE"], "description": "HTTP method."},
         "httpStatus": {"type": "integer", "minimum": 400, "maximum": 599, "description": "Failure HTTP status."},

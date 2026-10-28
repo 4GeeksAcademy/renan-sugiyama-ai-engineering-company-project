@@ -360,4 +360,75 @@ Phase 3 exit criteria (completed 2026-10-28): real business and technical events
 
 ## Approval and Scope Boundaries
 
-Implementation must wait for approval of the complete event mappings, proposed SQL types/constraints, deduplication index, and any required protected-path changes. Do not implement new order entities, frontend instrumentation, downstream analytics, stream processors, retention jobs, or unrelated refactors as part of this plan.
+Part 1 implementation required approval of the complete event mappings, SQL types/constraints, deduplication index, and any required protected-path changes. Do not add new order entities, frontend instrumentation, downstream analytics, stream processors, retention jobs, or unrelated refactors to Part 1. Part 2 below is a separate proposed extension and requires its own field, privacy, and database-type approvals before implementation.
+
+## Part 2: Optional Value and Message Columns
+
+Status: Part 2 implemented and verified on 2026-10-28. Part 1 remains complete and unchanged.
+
+### Goal and Proposed Contract
+
+- Add nullable `value` and `message` columns to `telemetry_events`. Frontend events send these keys inside the event's `properties` object; do not add them to the top-level event envelope.
+- Proposed `value` type: JSON number in the API and `DOUBLE PRECISION NULL` in PostgreSQL. `null` or an omitted field means no event-level numeric value; never substitute zero.
+- Proposed `message` type: optional string in the API and `TEXT NULL` in PostgreSQL. `null` or an omitted field means no message.
+- Per the user's decision on 2026-10-28, only `stock_movement_validation_failed`, `outbound_stock_blocked`, `stock_movement_recorded`, and `api_latency_recorded` may populate `value`; all other event types store `NULL`.
+- Per the user's decision on 2026-10-28, every error-level event must populate `message`: `user_authentication_denied`, `stock_movement_validation_failed`, `direct_stock_edit_rejected`, `outbound_stock_blocked`, and `api_request_failed`. Non-error events may omit it and store `NULL`.
+- Treat `value` and `message` as reserved metadata keys within incoming `properties`. The backend extracts them into their columns and excludes them from JSONB `tags`; `tags` contains the remaining allowlisted event-specific properties plus `event_id`.
+- Approved `value` semantics: `stock_movement_recorded` is the signed stock change (positive for incoming/increase, negative for outgoing/decrease); `api_latency_recorded` is `durationMs`; `stock_movement_validation_failed` and `outbound_stock_blocked` use the attempted/requested quantity. Keep units in the existing properties.
+- `message` must not become a channel for raw exceptions, stack traces, response bodies, credentials, personal/customer content, or arbitrary free text. For all error-level events, send a bounded, sanitized summary derived from approved event/error categories; raw messages are prohibited unless the approved telemetry privacy contract is explicitly revised.
+- Compatibility requirement: clients may omit `value` and may omit `message` for non-error events. All existing error-level emitters were updated before enforcing the required-message rule; no server-generated fallback is used. Because error messages are now required, the event schema version advances to `2.0.0`; clients still sending version `1.0.0` must be upgraded. The endpoint response shape and deduplication behavior remain unchanged.
+
+### Part 2.1: Approve Field Semantics and Privacy
+
+- `DOUBLE PRECISION` is approved for `value`. Eligible events and semantics are: `stock_movement_recorded` uses signed stock delta; `api_latency_recorded` uses `durationMs`; `stock_movement_validation_failed` uses attempted quantity; and `outbound_stock_blocked` uses requested quantity.
+- Every error-level event (`user_authentication_denied`, `stock_movement_validation_failed`, `direct_stock_edit_rejected`, `outbound_stock_blocked`, and `api_request_failed`) requires a nonempty sanitized `message` of at most 500 characters, derived from approved error/status categories. Raw exception and backend response messages remain prohibited unless the approved telemetry privacy contract is explicitly revised.
+- `value` and `message` are reserved keys inside the incoming event's `properties` object, not top-level envelope fields. `value` is null for all other event types; `message` is null for non-error events. The backend extracts both keys before constructing persisted `tags`.
+- Update all error-level emitters before enforcing the required-message rule; no server-generated fallback is approved.
+- The user authorized updates to protected `docs/telemetry/event-schemas.json` and `docs/telemetry/telemetry-plan.md` for this contract.
+
+### Part 2.2: Update the Event Contract
+
+- Update the approved JSON Schema's event-specific `properties` definitions with reserved `value` and `message` fields, numeric and bounded-string constraints, and conditional rules that allow `value` only for its four registered event types and require `message` for all five error-level types. Preserve strict additional-property rules.
+- Keep the top-level backend `TelemetryEvent` envelope unchanged; validate the reserved metadata fields within `properties` using the approved JSON Schema and retain omitted values as `None`.
+- Keep the shared TypeScript envelope and `track` API shape unchanged; update event emitters to pass `value` and `message` inside the `properties` argument.
+- Confirm frontend and backend schema versions remain compatible; update the version only if required by the approved compatibility policy.
+
+### Part 2.3: Add the Database Columns
+
+- Create a new migration, `003_add_telemetry_value_message.sql`, adding nullable `value DOUBLE PRECISION` and `message TEXT` columns. Do not edit or rerun migrations 001 or 002.
+- Apply the migration once using the schema-owner migration process, then inspect the table metadata and verify both columns are nullable.
+- Preserve the existing append-only permissions: `telemetry_ingest` may insert both new values but gains no UPDATE, DELETE, or TRUNCATE privileges. Add no new indexes unless an approved query requires them.
+
+### Part 2.4: Persist the Optional Fields
+
+- Extend `map_event_to_row` to extract `value` and `message` from validated `properties`, map them to the two columns, and remove those reserved keys from persisted `tags`. Preserve `None` for omitted values and numeric JSON values without string conversion.
+- Extend the single parameterized multi-row INSERT to include `value` and `message`; keep one statement and one transaction per nonempty batch, insert-only conflict handling, returned-row counts, and rollback behavior.
+- Keep the API response `{ "received": N, "stored": M, "rejected": R }`; do not expose messages or payloads in logs.
+
+### Part 2.5: Send Values from Existing Frontend Workflows
+
+- Inventory all existing `track` call sites and update emitters for the four value-eligible event types and every error-level event; pass the reserved fields inside each event's `properties` and preserve omission for other events.
+- In `movementTelemetry.ts`, send the signed stock delta for `stock_movement_recorded`, attempted quantity for `stock_movement_validation_failed`, and requested quantity for `outbound_stock_blocked` as `properties.value`; send no `properties.message` for successful movements.
+- For `api_latency_recorded`, send `durationMs` as `properties.value`.
+- For every error-level event, send the approved sanitized summary as `properties.message`. In `inventoryClient.ts`, derive `api_request_failed` messages from registered error/status categories; do not forward arbitrary response details or exception text. Retain the existing route template, status, error code, and retryability fields.
+- Verify the shared client preserves the existing `{ events: [...] }` envelope and batching, retry, beacon behavior, endpoint configuration, and unrelated frontends; the reserved fields travel only within each event's `properties` object.
+
+### Part 2.6: Verify the Extension
+
+- Verify both fields omitted, both explicitly null, numeric `properties.value` present, and approved `properties.message` present; reject wrong types, oversized/disallowed messages, extra fields, and reserved fields on disallowed event types.
+- Verify a 20-event batch still uses one parameterized multi-row INSERT, values map to the correct rows, duplicate IDs remain insert-only, and database failures roll back.
+- Exercise an inbound and outbound inventory movement through the UI and confirm `properties.value` is the signed delta while the reserved key is absent from stored `tags`; exercise an approved technical error and confirm the sanitized message is stored in the column, not duplicated in `tags`.
+- Confirm existing clients without the new fields still work, the telemetry model's unrelated fields remain unchanged, no frontend endpoint configuration changes, and no credentials or raw sensitive content appear in logs or database records.
+- Update this plan with the migration, contract approvals, verification evidence, and any remaining unchecked items before marking Part 2 complete.
+
+### Part 2 Implementation and Verification (2026-10-28)
+
+- **Contract and version:** Added reserved `value` and `message` properties to all 24 strict event schemas. `value` is nullable numeric metadata only for the four approved event types. Error events require one of the registered sanitized summaries (nonempty, at most 500 characters); non-error events accept only null or omission. The approved catalog and runtime schema copy are byte-identical and validate as Draft-07. The shared client and backend now use `schemaVersion` `2.0.0`; the envelope and `{ events: [...] }` client batching remain unchanged.
+- **Migration:** Created and applied `003_add_telemetry_value_message.sql` once under `telemetry_owner`. PostgreSQL confirms nullable `DOUBLE PRECISION value` and `TEXT message`. `telemetry_ingest` can insert both columns and retains no UPDATE or DELETE privilege. A constraint failure through the extended seven-column insert rolled back with no persisted row. Migrations 001 and 002 were not changed or rerun.
+- **Persistence:** `map_event_to_row` extracts both reserved keys, preserves numeric values and nulls, and excludes both keys from `tags`. The parameterized INSERT remains one statement and one transaction, now with seven bound values per row and insert-only event-ID conflict handling. A 20-row statement-capture probe observed one connection, one execute, and 140 parameters; an empty batch skipped the database. A live duplicate with altered metadata returned `{ "received": 1, "stored": 0, "rejected": 1 }`; the original value and tags remained unchanged.
+- **Emitters:** Inventory movements send signed stock delta, attempted/requested quantities, and `durationMs` as `value`. Existing authentication, movement validation, blocked outbound, and API failure emitters send registered sanitized messages. `direct_stock_edit_rejected` has no emitter in the repository; no new instrumentation was added. The shared telemetry transport and frontend endpoint configuration were not changed.
+- **Workflow verification:** Through the inventory UI, recorded one incoming and one outgoing unit for the existing item, then attempted an outbound quantity of 999. The successful movements persisted values `+1` and `-1`; the rejected movement left stock at 80 and persisted `outbound_stock_blocked` with value `999`. The 409 API failure persisted its registered summary. Read-only PostgreSQL checks confirmed `value` and `message` are absent from tags for these rows.
+- **Focused checks:** Schema probes covered every error-level mapping, both metadata fields omitted, both explicitly null on an eligible non-error event, numeric values, wrong types, missing/unsafe messages, extra fields, and `value` on a disallowed event type. A FastAPI probe confirmed omitted optional metadata remains accepted and persistence errors return HTTP 503. Inventory-manager and dashboard typechecks passed. The browser workflow produced a successful batched telemetry POST. No automated test files were added.
+- **Remaining limitation:** Authentication denial and `direct_stock_edit_rejected` were not generated through their UI workflows. Authentication emitters were typechecked and their event mapping/schema was probed; no direct-stock-rejection emitter exists to update or exercise. No frontend endpoint configuration, shared transport behavior, or unrelated event emitter was changed.
+
+Part 2 exit criteria are complete within the approved scope; the emitter gap above remains explicitly documented.

@@ -112,13 +112,15 @@ class TelemetryEvent(BaseModel):
     session_id: UUID = Field(alias="sessionId")
     user_id: str = Field(alias="userId", min_length=1)
     event_type: TelemetryEventType
-    schema_version: Literal["1.0.0"] = Field(alias="schemaVersion")
+    schema_version: Literal["2.0.0"] = Field(alias="schemaVersion")
     request_id: UUID = Field(alias="requestId")
     properties: dict[str, Any]
 
 
 def map_event_to_row(event: TelemetryEvent) -> dict[str, Any]:
     properties = event.model_dump(mode="json", include={"properties"})["properties"]
+    value = properties.pop("value", None)
+    message = properties.pop("message", None)
     tags = dict(properties)
     tags["event_id"] = str(event.event_id)
     return {
@@ -127,6 +129,8 @@ def map_event_to_row(event: TelemetryEvent) -> dict[str, Any]:
         "service": EVENT_SERVICE_BY_TYPE[event.event_type],
         "tags": tags,
         "level": EVENT_LEVEL_BY_TYPE[event.event_type],
+        "value": value,
+        "message": message,
     }
 
 

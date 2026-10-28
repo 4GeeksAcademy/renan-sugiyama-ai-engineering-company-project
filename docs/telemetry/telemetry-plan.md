@@ -79,6 +79,13 @@ Notification cooldowns apply only to duplicate alerts, never to the event stream
 - **Unbounded diagnostic detail:** Do not collect raw exception messages, stack traces, full URLs, query strings, or referrer URLs. These can contain secrets or personal data and increase storage and indexing cost; use registered error codes, route templates, and bounded labels.
 - **Per-interaction noise:** Do not collect every item read, refresh, keystroke, or field edit. These events have no defined decision value and can multiply ingestion and retention costs. Use the documented snapshots, stream aggregates, and batch rollups instead.
 
+### Reserved event metadata
+
+- `value` and `message` are reserved properties, not top-level envelope fields. The backend stores them in nullable columns and excludes them from JSONB `tags`; omitted or null values remain SQL `NULL`.
+- Only `stock_movement_validation_failed`, `outbound_stock_blocked`, `stock_movement_recorded`, and `api_latency_recorded` may provide a numeric `value`. Use the attempted quantity, requested quantity, signed stock delta, and `durationMs`, respectively. Other event types must omit `value`.
+- All error-level events require a nonempty `message` of at most 500 characters from the event schema's registered sanitized summaries. Non-error events may omit `message` or set it to null. Never send raw exceptions, response details, credentials, personal/customer content, or arbitrary free text.
+- The required error summaries make this event contract version `2.0.0`; clients emitting error-level events must use the new contract.
+
 ### Risks and safeguards
 
 - **Re-identification:** Pseudonymous IDs remain linkable. Keep the mapping separately protected, limit access and retention, and avoid exposing event-level identifiers in dashboards or metric labels.

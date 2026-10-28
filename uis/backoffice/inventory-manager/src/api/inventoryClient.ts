@@ -115,6 +115,17 @@ const ERROR_CODES: Record<number, string> = {
   422: "validation_error",
 };
 
+const API_ERROR_MESSAGES: Record<string, string> = {
+  bad_request: "API request failed: bad request.",
+  unauthorized: "API request failed: authentication required.",
+  forbidden: "API request failed: access denied.",
+  not_found: "API request failed: resource not found.",
+  conflict: "API request failed: request conflict.",
+  validation_error: "API request failed: invalid request.",
+  server_error: "API request failed: server error.",
+  client_error: "API request failed: client error.",
+};
+
 function trackResponse(
   path: string,
   method: string,
@@ -127,22 +138,29 @@ function trackResponse(
     method,
     httpStatus: status,
     durationMs: Math.round(durationMs),
+    value: Math.round(durationMs),
   });
   if (status < 400) return;
 
+  const errorCode =
+    ERROR_CODES[status] ?? (status >= 500 ? "server_error" : "client_error");
   track("api_request_failed", {
     routeTemplate: route,
     method,
     httpStatus: status,
-    errorCode:
-      ERROR_CODES[status] ?? (status >= 500 ? "server_error" : "client_error"),
+    errorCode,
     retryable: status >= 500 || status === 429,
+    message: API_ERROR_MESSAGES[errorCode] ?? API_ERROR_MESSAGES.client_error,
   });
   if (status === 401 || status === 403) {
     track("user_authentication_denied", {
       reason: status === 401 ? "missing_identity" : "unknown_user",
       route,
       httpStatus: status,
+      message:
+        status === 401
+          ? "Authentication denied: missing identity."
+          : "Authentication denied: unknown user.",
     });
   }
 }
