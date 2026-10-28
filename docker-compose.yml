@@ -1,4 +1,25 @@
 services:
+  telemetry-postgres:
+    image: postgres:17
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: telemetry
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${TELEMETRY_POSTGRES_PASSWORD:?Set TELEMETRY_POSTGRES_PASSWORD in .env.telemetry}
+      TELEMETRY_OWNER_PASSWORD: ${TELEMETRY_OWNER_PASSWORD:?Set TELEMETRY_OWNER_PASSWORD in .env.telemetry}
+      TELEMETRY_INGEST_PASSWORD: ${TELEMETRY_INGEST_PASSWORD:?Set TELEMETRY_INGEST_PASSWORD in .env.telemetry}
+    volumes:
+      - telemetry_postgres_data:/var/lib/postgresql/data
+      - ./services/telemetry-api/migrations:/migrations:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d telemetry"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - nexova-network
+
   interfaces:
     build:
       context: ./uis
@@ -35,6 +56,7 @@ services:
       - nexova-network
 
 volumes:
+  telemetry_postgres_data:
   website_node_modules:
   dashboard_node_modules:
 
