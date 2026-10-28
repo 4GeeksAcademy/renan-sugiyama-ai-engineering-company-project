@@ -1,4 +1,4 @@
-export const TELEMETRY_SCHEMA_VERSION = "1.0.0";
+export const TELEMETRY_SCHEMA_VERSION = "2.0.0";
 
 export type TelemetryContext = {
   userId: string;

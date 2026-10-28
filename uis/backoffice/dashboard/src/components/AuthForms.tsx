@@ -21,6 +21,7 @@ export function LoginForm() {
       reason: "unknown_user",
       route: "/login",
       httpStatus: 401,
+      message: "Authentication denied: unknown user.",
     });
     setTelemetryContext(null);
   }, [state]);

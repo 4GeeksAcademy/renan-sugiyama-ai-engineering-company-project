@@ -1,0 +1,502 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nexova.example/schemas/event-schemas.json",
+  "title": "Nexova Standard Event Catalog",
+  "description": "Draft-07 validation schema for the shared event envelope and its registered event types. Event-specific properties use strict allowlists.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventId",
+    "timestamp",
+    "sessionId",
+    "userId",
+    "event_type",
+    "schemaVersion",
+    "requestId",
+    "properties"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Occurrence time in ISO 8601 with timezone, normalized to UTC."
+    },
+    "sessionId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Pseudonymous user-session ID or generated system-session ID."
+    },
+    "userId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Pseudonymous user/service identity; use anonymous when identity is unavailable."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "website_visit_recorded",
+        "marketing_conversion_completed",
+        "sales_crm_coverage_snapshot_recorded",
+        "employee_departure_recorded",
+        "workforce_snapshot_recorded",
+        "employee_absence_recorded",
+        "internal_requisition_opened",
+        "internal_role_filled",
+        "support_ticket_resolved",
+        "support_queue_snapshot_recorded",
+        "support_query_closed",
+        "support_dissatisfaction_detected",
+        "support_ticket_escalated",
+        "department_kpi_snapshot_recorded",
+        "kpi_threshold_triggered",
+        "user_authentication_denied",
+        "stock_movement_validation_failed",
+        "direct_stock_edit_rejected",
+        "outbound_stock_blocked",
+        "stock_movement_recorded",
+        "stock_threshold_triggered",
+        "stock_movement_correction_recorded",
+        "api_latency_recorded",
+        "api_request_failed"
+      ],
+      "description": "Registered entity_action event name."
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "2.0.0",
+      "description": "Envelope/catalog version. Increment when the contract changes incompatibly."
+    },
+    "requestId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for the request or operation that produced this event."
+    },
+    "properties": {
+      "type": "object",
+      "description": "Event-specific payload, constrained by event_type below."
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"event_type": {"const": "website_visit_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/website_visit_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "marketing_conversion_completed"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/marketing_conversion_completed"}}}},
+    {"if": {"properties": {"event_type": {"const": "sales_crm_coverage_snapshot_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/sales_crm_coverage_snapshot_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "employee_departure_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/employee_departure_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "workforce_snapshot_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/workforce_snapshot_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "employee_absence_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/employee_absence_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "internal_requisition_opened"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/internal_requisition_opened"}}}},
+    {"if": {"properties": {"event_type": {"const": "internal_role_filled"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/internal_role_filled"}}}},
+    {"if": {"properties": {"event_type": {"const": "support_ticket_resolved"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/support_ticket_resolved"}}}},
+    {"if": {"properties": {"event_type": {"const": "support_queue_snapshot_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/support_queue_snapshot_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "support_query_closed"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/support_query_closed"}}}},
+    {"if": {"properties": {"event_type": {"const": "support_dissatisfaction_detected"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/support_dissatisfaction_detected"}}}},
+    {"if": {"properties": {"event_type": {"const": "support_ticket_escalated"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/support_ticket_escalated"}}}},
+    {"if": {"properties": {"event_type": {"const": "department_kpi_snapshot_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/department_kpi_snapshot_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "kpi_threshold_triggered"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/kpi_threshold_triggered"}}}},
+    {"if": {"properties": {"event_type": {"const": "user_authentication_denied"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/user_authentication_denied"}}}},
+    {"if": {"properties": {"event_type": {"const": "stock_movement_validation_failed"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/stock_movement_validation_failed"}}}},
+    {"if": {"properties": {"event_type": {"const": "direct_stock_edit_rejected"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/direct_stock_edit_rejected"}}}},
+    {"if": {"properties": {"event_type": {"const": "outbound_stock_blocked"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/outbound_stock_blocked"}}}},
+    {"if": {"properties": {"event_type": {"const": "stock_movement_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/stock_movement_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "stock_threshold_triggered"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/stock_threshold_triggered"}}}},
+    {"if": {"properties": {"event_type": {"const": "stock_movement_correction_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/stock_movement_correction_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "api_latency_recorded"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/api_latency_recorded"}}}},
+    {"if": {"properties": {"event_type": {"const": "api_request_failed"}}, "required": ["event_type"]}, "then": {"properties": {"properties": {"$ref": "#/definitions/api_request_failed"}}}}
+  ],
+  "definitions": {
+    "website_visit_recorded": {
+      "type": "object",
+      "description": "Records a website visit and traffic source.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Behavioral data: use opaque visit IDs and normalized paths; strip query strings, fragments, referrer URLs, and IP addresses.",
+      "additionalProperties": false,
+      "required": ["visitId", "landingPath", "trafficSource", "medium", "campaignId"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "visitId": {"type": "string", "minLength": 1, "description": "Opaque visit identifier."},
+        "landingPath": {"type": "string", "pattern": "^/", "description": "Normalized path without query string or fragment."},
+        "trafficSource": {"type": "string", "enum": ["direct", "organic_search", "paid_search", "referral", "social", "email", "other"], "description": "Controlled traffic source."},
+        "medium": {"type": ["string", "null"], "description": "Controlled marketing medium or null."},
+        "campaignId": {"type": ["string", "null"], "description": "Opaque campaign ID or null."}
+      }
+    },
+    "marketing_conversion_completed": {
+      "type": "object",
+      "description": "Records a completed marketing conversion.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Behavioral data: use opaque IDs and controlled conversion types; exclude names, email addresses, form values, and free-text lead details.",
+      "additionalProperties": false,
+      "required": ["conversionId", "conversionType", "attributionVisitId", "trafficSource", "medium", "campaignId"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "conversionId": {"type": "string", "minLength": 1, "description": "Opaque conversion ID."},
+        "conversionType": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered conversion type."},
+        "attributionVisitId": {"type": "string", "minLength": 1, "description": "Opaque attributed visit ID."},
+        "trafficSource": {"type": "string", "enum": ["direct", "organic_search", "paid_search", "referral", "social", "email", "other"], "description": "Controlled traffic source."},
+        "medium": {"type": ["string", "null"], "description": "Controlled marketing medium or null."},
+        "campaignId": {"type": ["string", "null"], "description": "Opaque campaign ID or null."}
+      }
+    },
+    "sales_crm_coverage_snapshot_recorded": {
+      "type": "object",
+      "description": "Measures CRM update coverage; the briefing reports a 40% current baseline.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Confidential business metric: emit aggregate counts only, never individual representative IDs.",
+      "additionalProperties": false,
+      "required": ["windowStart", "windowEnd", "eligibleRepCount", "updatedRepCount", "updateRate"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "windowStart": {"type": "string", "format": "date-time", "description": "Start of measurement window."},
+        "windowEnd": {"type": "string", "format": "date-time", "description": "End of measurement window."},
+        "eligibleRepCount": {"type": "integer", "minimum": 0, "description": "Number of eligible representatives."},
+        "updatedRepCount": {"type": "integer", "minimum": 0, "description": "Number of representatives who updated CRM."},
+        "updateRate": {"type": "number", "minimum": 0, "maximum": 1, "description": "Updated representatives divided by eligible representatives."}
+      }
+    },
+    "employee_departure_recorded": {
+      "type": "object",
+      "description": "Records an employee departure for turnover measurement.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Sensitive employment data: use a keyed pseudonymous employee ID and broad separation categories; omit names, contact details, and narrative reasons.",
+      "additionalProperties": false,
+      "required": ["employeeId", "department", "effectiveDate", "separationType"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "employeeId": {"type": "string", "minLength": 1, "description": "Keyed pseudonymous employee ID."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "effectiveDate": {"type": "string", "format": "date", "description": "Departure effective date."},
+        "separationType": {"type": "string", "enum": ["voluntary", "involuntary", "other"], "description": "Broad controlled category."}
+      }
+    },
+    "workforce_snapshot_recorded": {
+      "type": "object",
+      "description": "Provides workforce counts and scheduled-hours denominators.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Confidential workforce data: aggregate by department and suppress groups small enough to identify individuals.",
+      "additionalProperties": false,
+      "required": ["department", "snapshotAt", "activeEmployeeCount", "scheduledWorkHours", "windowStart", "windowEnd"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "snapshotAt": {"type": "string", "format": "date-time", "description": "Snapshot time."},
+        "activeEmployeeCount": {"type": "integer", "minimum": 0, "description": "Aggregate active headcount."},
+        "scheduledWorkHours": {"type": "number", "minimum": 0, "description": "Aggregate scheduled work hours in the window."},
+        "windowStart": {"type": "string", "format": "date-time", "description": "Start of measurement window."},
+        "windowEnd": {"type": "string", "format": "date-time", "description": "End of measurement window."}
+      }
+    },
+    "employee_absence_recorded": {
+      "type": "object",
+      "description": "Records absence hours for absenteeism measurement.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Sensitive employment and potentially health-related data: use a pseudonymous employee ID and broad categories; never include diagnoses, medical notes, or detailed leave reasons.",
+      "additionalProperties": false,
+      "required": ["absenceId", "employeeId", "department", "absenceDate", "absenceHours", "absenceCategory"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "absenceId": {"type": "string", "minLength": 1, "description": "Opaque absence record ID."},
+        "employeeId": {"type": "string", "minLength": 1, "description": "Keyed pseudonymous employee ID."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "absenceDate": {"type": "string", "format": "date", "description": "Date of absence."},
+        "absenceHours": {"type": "number", "minimum": 0, "description": "Hours absent."},
+        "absenceCategory": {"type": "string", "enum": ["planned", "unplanned", "other"], "description": "Broad controlled absence category."}
+      }
+    },
+    "internal_requisition_opened": {
+      "type": "object",
+      "description": "Starts the time-to-fill interval for an internal role.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Internal business data: use opaque requisition IDs and registered department and role-family codes; do not include applicant or employee identities.",
+      "additionalProperties": false,
+      "required": ["requisitionId", "department", "roleFamily", "openedAt"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "requisitionId": {"type": "string", "minLength": 1, "description": "Opaque requisition ID."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "roleFamily": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered role-family code."},
+        "openedAt": {"type": "string", "format": "date-time", "description": "Requisition opening time."}
+      }
+    },
+    "internal_role_filled": {
+      "type": "object",
+      "description": "Records a filled internal role and its time-to-fill.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Internal business data: use opaque requisition IDs; exclude the selected person's identity.",
+      "additionalProperties": false,
+      "required": ["requisitionId", "department", "openedAt", "filledAt", "elapsedCalendarDays"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "requisitionId": {"type": "string", "minLength": 1, "description": "Opaque requisition ID."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "openedAt": {"type": "string", "format": "date-time", "description": "Requisition opening time."},
+        "filledAt": {"type": "string", "format": "date-time", "description": "Role fill time."},
+        "elapsedCalendarDays": {"type": "number", "minimum": 0, "description": "Elapsed calendar days from opening to fill."}
+      }
+    },
+    "support_ticket_resolved": {
+      "type": "object",
+      "description": "Measures support resolution time and SLA attainment against the 24-hour commitment.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Client and operational data: pseudonymize ticket/client IDs; exclude ticket content and customer identity.",
+      "additionalProperties": false,
+      "required": ["ticketId", "clientId", "channel", "openedAt", "resolvedAt", "resolutionSeconds", "slaTargetSeconds", "slaMet"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
+        "clientId": {"type": "string", "minLength": 1, "description": "Pseudonymous client ID."},
+        "channel": {"type": "string", "enum": ["phone", "email", "chat", "other"], "description": "Support channel."},
+        "openedAt": {"type": "string", "format": "date-time", "description": "Ticket opening time."},
+        "resolvedAt": {"type": "string", "format": "date-time", "description": "Ticket resolution time."},
+        "resolutionSeconds": {"type": "integer", "minimum": 0, "description": "Elapsed resolution time in seconds."},
+        "slaTargetSeconds": {"type": "integer", "const": 86400, "description": "Committed 24-hour SLA target in seconds."},
+        "slaMet": {"type": "boolean", "description": "Whether resolution met the SLA target."}
+      }
+    },
+    "support_queue_snapshot_recorded": {
+      "type": "object",
+      "description": "Measures current support workload and backlog.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Operationally sensitive aggregate data: omit individual ticket and agent identifiers.",
+      "additionalProperties": false,
+      "required": ["queueId", "openTicketCount", "overdueTicketCount", "unassignedTicketCount", "activeAgentCount", "oldestOpenAgeSeconds"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "queueId": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered queue code."},
+        "openTicketCount": {"type": "integer", "minimum": 0, "description": "Open tickets in the queue."},
+        "overdueTicketCount": {"type": "integer", "minimum": 0, "description": "Open tickets past SLA."},
+        "unassignedTicketCount": {"type": "integer", "minimum": 0, "description": "Open tickets without an owner."},
+        "activeAgentCount": {"type": "integer", "minimum": 0, "description": "Agents currently active in the queue."},
+        "oldestOpenAgeSeconds": {"type": "integer", "minimum": 0, "description": "Age of the oldest open ticket in seconds."}
+      }
+    },
+    "support_query_closed": {
+      "type": "object",
+      "description": "Measures query resolution by automation versus human support.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Interaction data: use pseudonymous query IDs; never include transcript, prompt, or customer identity.",
+      "additionalProperties": false,
+      "required": ["queryId", "eligibleForAutomation", "resolutionMethod", "humanHandoff", "resolved"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "queryId": {"type": "string", "minLength": 1, "description": "Pseudonymous query ID."},
+        "eligibleForAutomation": {"type": "boolean", "description": "Whether the query belongs in the automation target denominator."},
+        "resolutionMethod": {"type": "string", "enum": ["bot", "agent", "unresolved"], "description": "Final resolution path."},
+        "humanHandoff": {"type": "boolean", "description": "Whether a human handled the query."},
+        "resolved": {"type": "boolean", "description": "Whether the query was resolved."}
+      }
+    },
+    "support_dissatisfaction_detected": {
+      "type": "object",
+      "description": "Records sentiment risk for early client intervention.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Inferred sensitive data: emit only score, risk category, model version, and pseudonymous IDs; never emit message text or inferred personal attributes.",
+      "additionalProperties": false,
+      "required": ["ticketId", "clientId", "sentimentScore", "riskLevel", "modelVersion"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
+        "clientId": {"type": "string", "minLength": 1, "description": "Pseudonymous client ID."},
+        "sentimentScore": {"type": "number", "minimum": -1, "maximum": 1, "description": "Model sentiment score."},
+        "riskLevel": {"type": "string", "enum": ["low", "medium", "high"], "description": "Controlled dissatisfaction risk level."},
+        "modelVersion": {"type": "string", "pattern": "^[a-zA-Z0-9._-]+$", "description": "Model version identifier."}
+      }
+    },
+    "support_ticket_escalated": {
+      "type": "object",
+      "description": "Records ticket escalation to compare it with prior dissatisfaction detection.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Client operational data: use pseudonymous ticket IDs and controlled categories; exclude ticket text and customer identity.",
+      "additionalProperties": false,
+      "required": ["ticketId", "escalationType", "escalationReasonCategory"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "ticketId": {"type": "string", "minLength": 1, "description": "Pseudonymous ticket ID."},
+        "escalationType": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered escalation type."},
+        "escalationReasonCategory": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered escalation reason category, not free text."}
+      }
+    },
+    "department_kpi_snapshot_recorded": {
+      "type": "object",
+      "description": "Supplies a department KPI observation to executive reporting.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Potentially confidential business data: use registered metric names and aggregate values; exclude person-level records.",
+      "additionalProperties": false,
+      "required": ["department", "metricName", "numericValue", "unit", "periodStart", "periodEnd"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "metricName": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered KPI name."},
+        "numericValue": {"type": "number", "description": "Observed numeric KPI value."},
+        "unit": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered metric unit."},
+        "periodStart": {"type": "string", "format": "date-time", "description": "Start of KPI measurement period."},
+        "periodEnd": {"type": "string", "format": "date-time", "description": "End of KPI measurement period."}
+      }
+    },
+    "kpi_threshold_triggered": {
+      "type": "object",
+      "description": "Records a strategic KPI threshold alert.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Confidential business data: use aggregate values, registered KPI names, and opaque deduplication keys.",
+      "additionalProperties": false,
+      "required": ["department", "metricName", "observedValue", "thresholdValue", "comparator", "severity", "dedupeKey"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "department": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered department code."},
+        "metricName": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered KPI name."},
+        "observedValue": {"type": "number", "description": "Observed KPI value."},
+        "thresholdValue": {"type": "number", "description": "Configured alert threshold."},
+        "comparator": {"type": "string", "enum": ["gt", "gte", "lt", "lte"], "description": "Threshold comparison operator."},
+        "severity": {"type": "string", "enum": ["info", "warning", "critical"], "description": "Alert severity."},
+        "dedupeKey": {"type": "string", "minLength": 1, "description": "Opaque key for suppressing duplicate alerts."}
+      }
+    },
+    "user_authentication_denied": {
+      "type": "object",
+      "description": "Records a rejected authentication attempt.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Security-sensitive: never include credentials, auth headers, or attempted usernames; use a route template and anonymous envelope userId when identity is unknown.",
+      "additionalProperties": false,
+      "required": ["reason", "route", "httpStatus", "message"],
+      "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Authentication denied: missing identity.", "Authentication denied: unknown user.", "Authentication denied: inactive user."], "description": "Approved sanitized authentication summary."},
+        "reason": {"type": "string", "enum": ["missing_identity", "unknown_user", "inactive_user"], "description": "Registered authentication rejection reason."},
+        "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
+        "httpStatus": {"type": "integer", "enum": [401, 403], "description": "HTTP response status."}
+      }
+    },
+    "stock_movement_validation_failed": {
+      "type": "object",
+      "description": "Records a rejected stock-movement validation.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Do not emit rejected values or request bodies; use route templates and registered validation codes only.",
+      "additionalProperties": false,
+      "required": ["route", "validationCode", "field", "httpStatus", "message"],
+      "properties": {
+        "value": {"type": ["number", "null"], "description": "Attempted movement quantity, when available."},
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Stock movement request was invalid.", "Stock movement item was not found.", "Stock movement conflicts with available stock.", "Stock movement contains an invalid field."], "description": "Approved sanitized validation summary."},
+        "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
+        "validationCode": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered validation error code."},
+        "field": {"type": ["string", "null"], "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$", "description": "Allowlisted schema field name, or null."},
+        "httpStatus": {"type": "integer", "enum": [400, 404, 409, 422], "description": "HTTP response status."}
+      }
+    },
+    "direct_stock_edit_rejected": {
+      "type": "object",
+      "description": "Records an attempt to set derived stock directly.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Do not emit attempted values; use opaque item IDs and route templates.",
+      "additionalProperties": false,
+      "required": ["itemId", "attemptedField", "route", "httpStatus", "message"],
+      "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Direct stock editing is not allowed."], "description": "Approved sanitized rejection summary."},
+        "itemId": {"type": ["string", "null"], "description": "Opaque item ID, or null if not available."},
+        "attemptedField": {"type": "string", "const": "current_stock", "description": "Field the request attempted to set."},
+        "route": {"type": "string", "pattern": "^/", "description": "Route template, without IDs or query values."},
+        "httpStatus": {"type": "integer", "const": 422, "description": "Validation rejection status."}
+      }
+    },
+    "outbound_stock_blocked": {
+      "type": "object",
+      "description": "Records an outbound movement rejected because it would produce negative stock.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Inventory data: use opaque item IDs and supported units; exclude free-text movement reasons.",
+      "additionalProperties": false,
+      "required": ["itemId", "availableStock", "requestedQuantity", "unit", "httpStatus", "message"],
+      "properties": {
+        "value": {"type": ["number", "null"], "description": "Requested outbound quantity."},
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["Outbound stock movement exceeded available stock."], "description": "Approved sanitized stock summary."},
+        "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
+        "availableStock": {"type": "number", "minimum": 0, "description": "Current available stock before the attempt."},
+        "requestedQuantity": {"type": "number", "exclusiveMinimum": 0, "description": "Requested outbound quantity."},
+        "unit": {"type": "string", "enum": ["unit", "pack", "box", "ream", "roll", "liter", "kg"], "description": "Supported inventory unit."},
+        "httpStatus": {"type": "integer", "const": 409, "description": "Conflict response status."}
+      }
+    },
+    "stock_movement_recorded": {
+      "type": "object",
+      "description": "Records a persisted inbound, outbound, or adjustment movement.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Inventory and user activity data: use opaque item/movement IDs; omit free-text movement reasons and pseudonymize envelope userId.",
+      "additionalProperties": false,
+      "required": ["movementId", "itemId", "movementType", "quantity", "unit", "stockBefore", "stockAfter"],
+      "properties": {
+        "value": {"type": ["number", "null"], "description": "Signed stock change for the recorded movement."},
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "movementId": {"type": "string", "minLength": 1, "description": "Opaque movement ID."},
+        "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
+        "movementType": {"type": "string", "enum": ["incoming_stock", "outgoing_stock", "stock_adjustment"], "description": "Registered movement type."},
+        "quantity": {"type": "number", "exclusiveMinimum": 0, "description": "Movement quantity."},
+        "unit": {"type": "string", "enum": ["unit", "pack", "box", "ream", "roll", "liter", "kg"], "description": "Supported inventory unit."},
+        "stockBefore": {"type": ["number", "null"], "description": "Derived stock before movement, or null when no prior stock exists."},
+        "stockAfter": {"type": "number", "minimum": 0, "description": "Derived stock after movement."}
+      }
+    },
+    "stock_threshold_triggered": {
+      "type": "object",
+      "description": "Records a crossing below an item's reorder point.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Inventory data: use opaque item IDs and emit only on a crossing, not every read of an already-low item.",
+      "additionalProperties": false,
+      "required": ["itemId", "stockBefore", "stockAfter", "reorderPoint", "crossing"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
+        "stockBefore": {"type": "number", "minimum": 0, "description": "Stock at or above threshold before the crossing."},
+        "stockAfter": {"type": "number", "minimum": 0, "description": "Stock below threshold after the crossing."},
+        "reorderPoint": {"type": "number", "minimum": 0, "description": "Configured reorder point."},
+        "crossing": {"type": "string", "const": "below", "description": "Threshold crossing direction."}
+      }
+    },
+    "stock_movement_correction_recorded": {
+      "type": "object",
+      "description": "Records a compensating movement that corrects an earlier movement.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Inventory and user activity data: use opaque movement/item IDs and registered categories; omit the free-text correction reason.",
+      "additionalProperties": false,
+      "required": ["originalMovementId", "compensatingMovementId", "itemId", "correctionCategory"],
+      "properties": {
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "originalMovementId": {"type": "string", "minLength": 1, "description": "Opaque ID of corrected movement."},
+        "compensatingMovementId": {"type": "string", "minLength": 1, "description": "Opaque ID of compensating movement."},
+        "itemId": {"type": "string", "minLength": 1, "description": "Opaque inventory item ID."},
+        "correctionCategory": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered correction category, not free text."}
+      }
+    },
+    "api_latency_recorded": {
+      "type": "object",
+      "description": "Records API request duration for performance monitoring.",
+      "x-sensitive-data": false,
+      "x-sanitization": "Use route templates only; omit route parameters, query strings, request payloads, and client IP addresses.",
+      "additionalProperties": false,
+      "required": ["routeTemplate", "method", "httpStatus", "durationMs"],
+      "properties": {
+        "value": {"type": ["number", "null"], "description": "Request duration in milliseconds."},
+        "message": {"type": "null", "description": "Reserved sanitized summary; null for non-error events."},
+        "routeTemplate": {"type": "string", "pattern": "^/", "description": "Route template without IDs or query values."},
+        "method": {"type": "string", "enum": ["GET", "POST", "PATCH", "DELETE"], "description": "HTTP method."},
+        "httpStatus": {"type": "integer", "minimum": 100, "maximum": 599, "description": "HTTP response status."},
+        "durationMs": {"type": "number", "minimum": 0, "description": "Request duration in milliseconds."}
+      }
+    },
+    "api_request_failed": {
+      "type": "object",
+      "description": "Records an API request failure for reliability monitoring.",
+      "x-sensitive-data": true,
+      "x-sanitization": "Emit registered error codes only; exclude stack traces, request bodies, query strings, route parameters, and raw exception messages.",
+      "additionalProperties": false,
+      "required": ["routeTemplate", "method", "httpStatus", "errorCode", "retryable", "message"],
+      "properties": {
+        "message": {"type": "string", "minLength": 1, "maxLength": 500, "enum": ["API request failed: bad request.", "API request failed: authentication required.", "API request failed: access denied.", "API request failed: resource not found.", "API request failed: request conflict.", "API request failed: invalid request.", "API request failed: server error.", "API request failed: client error."], "description": "Approved sanitized API failure summary."},
+        "routeTemplate": {"type": "string", "pattern": "^/", "description": "Route template without IDs or query values."},
+        "method": {"type": "string", "enum": ["GET", "POST", "PATCH", "DELETE"], "description": "HTTP method."},
+        "httpStatus": {"type": "integer", "minimum": 400, "maximum": 599, "description": "Failure HTTP status."},
+        "errorCode": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "Registered error code."},
+        "retryable": {"type": "boolean", "description": "Whether retrying the request is appropriate."}
+      }
+    }
+  }
+}

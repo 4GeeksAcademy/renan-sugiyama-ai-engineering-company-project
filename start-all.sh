@@ -9,12 +9,44 @@
 #
 # Free all ports after a crash or closed terminal:
 #   kill $(lsof -ti :8000,:8001,:8002,:8003,:8004,:3000,:3001,:5173,:5174)
+
+# To stop the databse (docker-compose) run the following command:
+# docker compose --env-file .env.telemetry stop telemetry-postgres
 set -u
 cd "$(dirname "$0")"
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Docker is required. Install and start Docker Desktop first." >&2
+  exit 1
+fi
+
+if [ ! -f .env.telemetry ]; then
+  echo "Missing .env.telemetry. Configure the local database passwords first." >&2
+  exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  echo "Docker is not available. Start Docker Desktop and try again." >&2
+  exit 1
+fi
+
+echo "Starting telemetry PostgreSQL (it will keep running after Ctrl+C)..."
+if ! docker compose --env-file .env.telemetry up -d --wait telemetry-postgres; then
+  echo "PostgreSQL startup failed; backend and UI processes were not started." >&2
+  exit 1
+fi
 
 if [ -f .venv/bin/activate ]; then
   # shellcheck disable=SC1091
   source .venv/bin/activate
+fi
+
+if [ -z "${TELEMETRY_DATABASE_URL:-}" ]; then
+  TELEMETRY_DATABASE_URL="$(
+    docker compose --env-file .env.telemetry config --format json |
+      python -c 'import json,sys; from urllib.parse import quote; env=json.load(sys.stdin)["services"]["telemetry-postgres"]["environment"]; print("postgresql://telemetry_ingest:"+quote(env["TELEMETRY_INGEST_PASSWORD"],safe="")+"@127.0.0.1:5433/telemetry")'
+  )"
+  export TELEMETRY_DATABASE_URL
 fi
 
 pids=()

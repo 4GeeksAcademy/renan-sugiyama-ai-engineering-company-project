@@ -35,6 +35,7 @@ export function trackMovementRecorded(
     unit: movement.unit,
     stockBefore,
     stockAfter,
+    value: stockDelta(payload),
   });
 
   const reorderPoint = item.reorder_point;
@@ -61,6 +62,13 @@ const VALIDATION_CODES: Record<number, string> = {
   422: "invalid_field",
 };
 
+const VALIDATION_MESSAGES: Record<string, string> = {
+  bad_request: "Stock movement request was invalid.",
+  not_found: "Stock movement item was not found.",
+  conflict: "Stock movement conflicts with available stock.",
+  invalid_field: "Stock movement contains an invalid field.",
+};
+
 export function trackMovementRejected(
   item: InventoryItem | undefined,
   payload: InventoryMovementCreate,
@@ -80,6 +88,8 @@ export function trackMovementRejected(
       requestedQuantity: payload.quantity,
       unit: item.unit,
       httpStatus: 409,
+      value: payload.quantity,
+      message: "Outbound stock movement exceeded available stock.",
     });
     return;
   }
@@ -92,5 +102,7 @@ export function trackMovementRejected(
     validationCode: code,
     field: field && /^[a-zA-Z][a-zA-Z0-9_]*$/.test(field) ? field : null,
     httpStatus: error.status,
+    value: payload.quantity,
+    message: VALIDATION_MESSAGES[code],
   });
 }
