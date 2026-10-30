@@ -36,6 +36,13 @@ if ! docker compose --env-file .env.telemetry up -d --wait telemetry-postgres; t
   exit 1
 fi
 
+if ! docker compose --env-file .env.telemetry exec -T telemetry-postgres \
+  psql -U postgres -d telemetry \
+  -f /migrations/004_grant_telemetry_ingest_report_select.sql; then
+  echo "Telemetry report read permissions could not be applied." >&2
+  exit 1
+fi
+
 if [ -f .venv/bin/activate ]; then
   # shellcheck disable=SC1091
   source .venv/bin/activate

@@ -45,6 +45,7 @@ function App({ data, error }: AppProps) {
           <a className="active" href="#">
             Dashboard
           </a>
+          <a href="/telemetry">Technical telemetry</a>
           <a href="#">Support</a>
           <a href="#">Sales</a>
           <a href="#">Training</a>
