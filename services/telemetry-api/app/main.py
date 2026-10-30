@@ -34,7 +34,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://localhost:5174",
     ],
-    allow_methods=["POST"],
+    allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
 app.state.telemetry_endpoint = TELEMETRY_ENDPOINT
