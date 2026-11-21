@@ -1,0 +1,218 @@
+{
+  "input": {
+    "path": "/Users/renansugiyama/Desktop/conteudo_vscode/4geeks/ai-engineering-company-project/data/raw/nexova_sales.csv",
+    "sha256": "02e230c221a375b764d84025f282ae1309915eb218ef5e5e7450b47672a886e7",
+    "rows": 120,
+    "columns": [
+      "month",
+      "revenue_usd",
+      "active_contracts",
+      "avg_contract_value_usd",
+      "business_line"
+    ],
+    "raw_dtypes": {
+      "month": "str",
+      "revenue_usd": "float64",
+      "active_contracts": "int64",
+      "avg_contract_value_usd": "float64",
+      "business_line": "str"
+    },
+    "missing_or_empty_by_column": {
+      "month": 0,
+      "revenue_usd": 0,
+      "active_contracts": 0,
+      "avg_contract_value_usd": 0,
+      "business_line": 0
+    },
+    "business_line_counts": {
+      "consolidated": 120
+    },
+    "duplicate_months": 0,
+    "nonpositive_revenue_count": 0,
+    "annual_growth_percent": {
+      "2017": 6.908504953190953,
+      "2018": 0.673325519745771,
+      "2019": 6.792629842661446,
+      "2020": 1.3387813987531416,
+      "2021": 7.345828104436269,
+      "2022": 0.4985749519883509,
+      "2023": 7.225694439622199,
+      "2024": 2.5509522421114594,
+      "2025": 6.0974368866330675
+    },
+    "monthly_to_annual_mean_ratio": {
+      "1": {
+        "min": 1.1354766612242313,
+        "max": 1.1903461117003875,
+        "mean": 1.1694341862059305
+      },
+      "2": {
+        "min": 1.140456508861439,
+        "max": 1.1891038272579615,
+        "mean": 1.1640110703048403
+      },
+      "3": {
+        "min": 0.9395297954360595,
+        "max": 1.036709108435081,
+        "mean": 0.9893938737070027
+      },
+      "4": {
+        "min": 0.9413993279817612,
+        "max": 1.0430638733687916,
+        "mean": 1.0060856111536969
+      },
+      "5": {
+        "min": 0.9414491049201339,
+        "max": 1.0263717295028394,
+        "mean": 0.9836872434560016
+      },
+      "6": {
+        "min": 0.9535769212855871,
+        "max": 1.0108215288942535,
+        "mean": 0.9763825620300601
+      },
+      "7": {
+        "min": 0.942606741214162,
+        "max": 1.0421488690074663,
+        "mean": 0.9925859395568454
+      },
+      "8": {
+        "min": 0.7453914570074885,
+        "max": 0.8321108838937472,
+        "mean": 0.7845440101791659
+      },
+      "9": {
+        "min": 0.9463177922698265,
+        "max": 1.0275768532368537,
+        "mean": 0.9785834837522174
+      },
+      "10": {
+        "min": 0.9538281627189784,
+        "max": 1.0330528629636622,
+        "mean": 0.9862226525141651
+      },
+      "11": {
+        "min": 0.948687384933301,
+        "max": 1.0295957668287128,
+        "mean": 0.991320985569209
+      },
+      "12": {
+        "min": 0.9507877708947525,
+        "max": 1.0214313024976212,
+        "mean": 0.9777483815708654
+      }
+    },
+    "pattern_note": "Observed annual growth and individual monthly ratios can differ from the approximate briefing ranges; source data was not altered.",
+    "missing_value_policy": "Missing dates and targets are rejected. Optional contract fields are not model features; no optional-field imputation is required."
+  },
+  "train_period": [
+    "2016-01",
+    "2023-12"
+  ],
+  "test_period": [
+    "2024-01",
+    "2025-12"
+  ],
+  "train_months": 96,
+  "test_months": 24,
+  "model": {
+    "algorithm": "RandomForestRegressor",
+    "parameters": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "criterion": "squared_error",
+      "max_depth": null,
+      "max_features": 1.0,
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 2,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 200,
+      "n_jobs": 1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "training_rows_after_warmup": 84
+  },
+  "versions": {
+    "python": "3.14.5",
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "joblib": "1.6.0"
+  },
+  "test_metrics": {
+    "mse_usd2": 4072646227.750994,
+    "rmse_usd": 63817.28784389849,
+    "normalized_rmse_percent": 6.652046345344128,
+    "mae_usd": 54655.96999821424,
+    "r2": 0.4540214058173927,
+    "normalized_rank_gini": 0.769396147081864
+  },
+  "revenue_psi": {
+    "psi": 8.160169961540147,
+    "bin_edges_usd": [
+      "-inf",
+      669072.1699999999,
+      696215.94,
+      729529.12,
+      748363.46,
+      778037.01,
+      805343.57,
+      829434.76,
+      871703.25,
+      924497.94,
+      "+inf"
+    ],
+    "train_counts": [
+      10,
+      9,
+      10,
+      9,
+      10,
+      9,
+      10,
+      9,
+      10,
+      10
+    ],
+    "test_counts": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      5,
+      17
+    ]
+  },
+  "seasonal_naive_test_mse_usd2": 4913574059.171505,
+  "seasonal_naive_test_rmse_usd": 70096.89051000412,
+  "interval": {
+    "method": "Per-horizon 10th/90th percentile of three signed recursive backtest errors",
+    "nominal_percent": 80,
+    "calibration_origins": [
+      "2019-12-01",
+      "2020-12-01",
+      "2021-12-01"
+    ],
+    "test_coverage_percent": 58.333333333333336,
+    "caveat": "Three overlapping historical calibration windows do not guarantee coverage."
+  },
+  "finance_acceptance": "Undecided: Finance has not specified an acceptable error threshold.",
+  "limitations": [
+    "PSI compares consolidated revenue distributions, not unavailable business-line mix.",
+    "A low MSE alone cannot establish robustness, ranking, distribution stability, interval calibration, or business acceptance.",
+    "Random Forest predictions cannot extrapolate beyond training target ranges.",
+    "This single historical holdout does not guarantee future performance or provide a forecast beyond 2025 without newer approved data."
+  ]
+}
